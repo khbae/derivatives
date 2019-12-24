@@ -4,25 +4,264 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+
+library(magrittr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 ```
 
-## R Markdown
+# 콜옵션 - 풋옵션 Payoff
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+변수를 다음과 같이 정의합니다.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+knitr::kable(
+  data.frame(
+    c('S','K', 'σ', 'r', 'T'),
+    c('30', '25', '0.1', '0.02', '1')
+  ), col.names = c('변수', '값'),
+  escape = FALSE,
+  booktabs = TRUE,
+  align = "c"
+) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-## Including Plots
+콜옵션과 풋옵션의 Value는 다음과 같이 계산됩니다.
 
-You can also embed plots, for example:
+$$Value\ of\ Call: (S(T) - K)^+ = max\{0, S(T)-K\}$$
+$$Value\ of\ Put: (K- S(T))^+ = max\{0, K - S(T)\}$$
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+주가와 행사가 기준 만기 Payoff와 Value는 다음과 같습니다.
+
+```{r}
+data.frame(
+  'S' = seq(10, 50, 1)  
+) %>%
+  mutate('Value of Call' = ifelse( (`S`- 25) >= 0, `S`- 25, 0)) %>%
+  mutate('Value of Put' = ifelse( (25 - `S`) >= 0, 25 - `S`, 0)) %>%
+  gather(key, value, -S) %>%
+  ggplot(aes(x = S, y = value, group = key)) +
+  geom_line(aes(color = key)) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.title = element_blank()) +
+  geom_vline(xintercept = 25, linetype="dotted") +
+  annotate(geom="text", x=30, y=15, label="Strike Price = 25",
+              color="black")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+- 콜옵션: 만기시 주가가 행사가인 25보다 크면 밸류가 양수, 그렇지 않으면 0 입니다.
+- 풋옵션: 만기시 주가가 행사가인 25보다 작으면 밸류가 양수, 그렇지 않으면 0 입니다.
+
+# Closed Form
+
+먼저 블랙숄즈옵션 모형의 Closed-Form 수식은 다음과 같습니다.
+
+$$c = S_oN(d_1) - Ke^{-rT}N(d_2)$$
+$$p = Ke^{-rT}N(-d_2) - S_oN(-d_1)$$
+
+$$where$$
+
+\begin{equation} 
+\begin{split}
+
+d1 & = \frac{ln(\frac{S_o}{K}) +  (r + \frac{\sigma^2}{2})T}{\sigma\sqrt{T}}\\
+d2 & = \frac{ln(\frac{S_o}{K}) +  (r - \frac{\sigma^2}{2})T}{\sigma\sqrt{T}}\\
+& =  d1 - \sigma\sqrt{T}\\
+
+\end{split}
+\end{equation}
+
+각 변수에 해당하는 값들을 수식에 입력하여 콜옵션과 풋옵션의 가격을 구하도록 합니다.
+
+```{r echo = FALSE}
+s = 30
+k = 25
+sigma = 0.1
+rho = 0.02
+tau = 1
+
+d1 = (log(s/k) + (rho + sigma^2/2)*tau) / sigma*sqrt(tau)
+d2 = d1 - sigma * sqrt(tau) 
+
+cat('d1', d1)
+cat('d2', d2)
+
+call = (s * pnorm(d1) - k*exp(-rho*tau)*pnorm(d2)) %>% round(., 4)
+put = (k*exp(-rho*tau)*pnorm(-d2) - s * pnorm(-d1)) %>% round(., 4)
+
+cat('Price of call', call)
+cat('Price of put', put)
+```
+
+온라인의 각종 BSM 계산기와 비교해도 동일한 값이 계산됩니다. (https://goodcalculators.com/black-scholes-calculator/)
+
+# Simulation
+
+Risk Neutral 하에서 주가는 Geometric Brownian Motion을 따른다고 가정하며, 확률과정은 다음과 같습니다.
+
+$$ds = \mu Sdt + \sigma Sdz$$
+짧은 $\Delta t$ 기간 동안 변수 $z$의 변화분은 $\Delta z$ 를 따릅니다.
+
+$$\Delta z = \epsilon\sqrt{\Delta t}, \epsilon \sim N(0,1)$$
+
+따라서 GBM 식을 discrete 모형으로 전환하면 다음과 같습니다.
+
+$$\Delta S = \mu Sdt + \sigma S\epsilon\sqrt{\Delta t}, \epsilon \sim N(0,1)$$
+
+주가의 확률과정 시뮬레이션을 위한 식은 다음과 같습니다.
+
+$$S_{t+\Delta t} = S_t \times exp((\mu - \frac{1}{2}\sigma^2)\Delta t + \sigma \epsilon \sqrt{\Delta t}), \epsilon \sim N(0,1)$$
+
+위 수식에 맞춰 500회의 시뮬레이션을 하도록 하며, $\Delta t$는 일간 주가의 변화를 시뮬레이션 하기 위해 $\frac{1}{255}$로 하도록 하며, $\mu$는 $r$과 같습니다.
+
+```{r echo}
+nsim = 500
+s = 30
+sigma = 0.1
+rho = 0.02
+t = 1
+dt = t/255
+gbm <- matrix(ncol = nsim, nrow = t * 255)
+
+# function
+gbm_sim = function(s, sigma, rho, t, dt) {
+  mat = matrix(nrow = t * 255, ncol = 1)
+  mat[1, 1] = s
+  for (d in 2 : 255) {
+    epsilon = rnorm(255)
+    mat[d, 1] = exp((rho - (sigma^2)/2) * dt + sigma * epsilon[d] * sqrt(dt))
+  }
+
+  mat = apply(mat, 2, cumprod)
+}
+
+set.seed(123)
+sim = lapply( (1 : nsim), function(x) {
+  temp = gbm_sim(30, 0.1, 0.02, 1, 1/255) %>% data.frame()
+  temp = temp %>% mutate(sim_number = as.character(x),
+                  n = row_number())
+  
+})
+
+sim = do.call(rbind, sim)
+
+sim %>%
+  ggplot(aes(x = n, y = ., group = sim_number)) +
+  geom_line(aes(color = sim_number)) +
+  # geom_hline(yintercept = s, linetype="dotted", color = 'red', size = 1.5) +
+  theme_bw() +
+  ylab('Stock Price') +
+  xlab('') +
+  theme(legend.position = 'None')
+```
+
+미래의 옵션 가치를 구한 후, 이들 현재가치의 평균을 구하여 콜옵션 가격을 계산하도록 합니다.
+
+$$Call: E[e^{-rT}(max\{0, S(T)-K\})]$$
+$$Put: E[e^{-rT}(max\{0, K - S(T)\})]$$
+
+만기에 해당하는 $S(T)$의 분포는 다음과 같습니다.
+
+```{r}
+sim_fin = sim %>%
+  filter(n == 255)
+
+sim_fin %>%
+  ggplot(aes(x = .)) +
+  geom_histogram() +
+  theme_bw() +
+  geom_vline(xintercept = 25, linetype="dotted") +
+  annotate(geom="text", x=27, y=10, label="Strike Price = 25",
+              color="black") +
+  xlab('Stock Price')
+```
+
+이제 해당 주가와 Strike Price를 비교해 만기 Value를 계산한 후, 이를 현재가치로 환산하여 평균을 구하도록 합니다.
+
+```{r}
+sim_price = sim_fin %>%
+  rename(price = "." ) %>%
+  select(price) %>%
+  mutate(call = ifelse(price - 25 > 0, (price - 25) * exp(-rho * t), 0)) %>%
+  mutate(put = ifelse(25 - price > 0, (25 - price) * exp(-rho * t), 0)) %>%
+  select(call, put) %>%
+  colMeans() %>% round(. ,4)
+
+cat(sim_price)
+```
+
+Closed-Form으로 구한 값과 비교해도록 하겠습니다.
+
+```{r}
+knitr::kable(
+  data.frame(
+    c(call, put), 
+    sim_price
+  ), col.names = c('Closed-Form', 'Simulation'),
+  escape = FALSE,
+  booktabs = TRUE,
+  align = "c"
+) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+두 값이 거의 비슷하긴 하지만 약간의 차이가 있으며, 이는 시뮬레이션 횟수가 100회로 너무 작기 때문입니다. 이번에는 시뮬레이션 횟수를 5000회로 늘린 후 비교하도록 하겠습니다.
+
+```{r}
+sim2 = lapply( (1 : 5000), function(x) {
+  temp = gbm_sim(30, 0.1, 0.02, 1, 1/255) %>% data.frame()
+  temp = temp %>% mutate(sim_number = as.character(x),
+                  n = row_number())
+  
+})
+
+sim2 = do.call(rbind, sim2)
+
+# sim2 %>%
+#   ggplot(aes(x = n, y = ., group = sim_number)) +
+#   geom_line(aes(color = sim_number)) +
+#   # geom_hline(yintercept = s, linetype="dotted", color = 'red', size = 1.5) +
+#   theme_bw() +
+#   ylab('Stock Price') +
+#   xlab('') +
+#   theme(legend.position = 'None')
+
+sim_fin2 = sim2 %>%
+  filter(n == 255)
+
+sim_fin2 %>%
+  ggplot(aes(x = .)) +
+  geom_histogram() +
+  theme_bw() +
+  geom_vline(xintercept = 25, linetype="dotted") +
+  annotate(geom="text", x=27, y=10, label="Strike Price = 25",
+              color="black") +
+  xlab('Stock Price')
+```
+
+
+```{r}
+sim_price2 = sim_fin2 %>%
+  rename(price = "." ) %>%
+  select(price) %>%
+  mutate(call = ifelse(price - 25 > 0, (price - 25) * exp(-rho * t), 0)) %>%
+  mutate(put = ifelse(25 - price > 0, (25 - price) * exp(-rho * t), 0)) %>%
+  select(call, put) %>%
+  colMeans() %>% round(. ,4)
+
+knitr::kable(
+  data.frame(
+    c(call, put), 
+    sim_price2
+  ), col.names = c('Closed-Form', 'Simulation'),
+  escape = FALSE,
+  booktabs = TRUE,
+  align = "c"
+) %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", full_width = F)
+```
