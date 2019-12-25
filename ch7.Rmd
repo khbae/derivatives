@@ -1,6 +1,6 @@
 ---
 title: "Lecture 7. Black Scholes Options Pricing"
-
+output: html_document
 ---
 
 <style type="text/css">
@@ -37,8 +37,17 @@ pre { /* Code block - determines code spacing between lines */
 }
 </style>
 
-# Purpose
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
 
+library(magrittr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+
+# Purpose
 
 - Develop European-style option valuation formula
     
