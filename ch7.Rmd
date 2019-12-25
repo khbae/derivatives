@@ -1,84 +1,128 @@
 ---
-title: "07 Black Scholes Options Pricing"
+title: "Lecture 7. Black Scholes Options Pricing"
 
 ---
 
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 18px;
+      font-family: "Times New Roman", Times, serif;
+  }
+td {  /* Table  */
+  font-size: 20px;
+}
+h1.title {
+  font-size: 24px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 22px;
+  color: DarkBlue;
+}
+h2 { /* Header 2 */
+    font-size: 22px;
+  color: DarkBlue;
+}
+h3 { /* Header 3 */
+  font-size: 22px;
+  font-family: "Times New Roman", Times, serif;
+  color: DarkBlue;
+}
+code.r{ /* Code block */
+    font-size: 20px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 20px;
+}
+</style>
+
 # Purpose
 
-Develop European-style option valuation formula
 
-- The Black-Scholes formula is a limiting case of the binomial formula(infinitely many periods) for the price of a European option.
-- Called "Black-Scholes" or "Black-Scholes/Merton" model
+- Develop European-style option valuation formula
+    
+    - The Black-Scholes formula is a limiting case of the binomial formula(infinitely many periods) for the price of a European option.
+    - Called "Black-Scholes" or "Black-Scholes/Merton" model
+
+\vspace{12pt}
+
+- Key ideas are
+    
+    - Risk-free hedge and risk neutral valuation
+    - Log-normal asset price distribution mechanics
+    - BSM option valuation formula and its variants
 
 # Black-Scholes Assumptions
 
-## Assumptions about stock return distribution
+- Assumptions about stock return distribution
 
-- Continuously compounded returns on the stock are normally distributed and independent over time, i.e. stock prices are log-normally distributed.
-- The volatility of continuously compounded returns is known and constant
-- Future dividends are known, either as dollar amount or as a fixed dividend yield
+    - Continuously compounded returns on the stock are normally distributed and independent over time, i.e. stock prices are log-normally distributed.
+    - The volatility of continuously compounded returns is known and constant
+    - Future dividends are known, either as dollar amount or as a fixed dividend yield
 
-## Assumptions about the economic environment
+\vspace{12pt}
 
-- The risk-free rate is known and constant
-- There are no transaction costs or taxes
-- It is possible to short-sell costlessly and to borrow at the risk-free rate
+- Assumptions about the economic environment
+
+    - The risk-free rate is known and constant
+    - There are no transaction costs or taxes
+    - It is possible to short-sell costlessly and to borrow at the risk-free rate
 
 # Black-Scholes Model
 
 - Under risk-neutrality, current call value is
-$$c = e^{-rT}E[\widetilde C_T]$$
-- $E[\widetilde C_T]$ is the expected terminal call price based on asset price distribution
+$$c = e^{-rT}\mathbb{E}[\tilde c_T]$$
+- $\mathbb{E}[\tilde c_T]$ is the expected terminal call price based on asset price distribution
 - Terminal call value is
 
 \[
-  \widetilde C_T = 
+  \tilde c_T = 
 \left\{
 \begin{aligned}
-& \widetilde S_T - K, & if \quad S_T\ge K \\
-& 0, & if \quad S_T \le K
+& \tilde{S}_T - K, & if \quad \tilde{S}_T\ge K \\
+& 0, & if \quad \tilde{S}_T \le K
 \end{aligned}
 \right.
 \]
 
-- Expected terminal call value of exercise price K is
+- Expected terminal call value of exercise price $K$ is
 
 \begin{equation} 
 \begin{split}
-E[\widetilde C_T] &= E[\widetilde S_T - K \mid S_T > K]Pr(S_T > K)\\
- & =E[\widetilde S_T \mid S_T > K]Pr(S_T > K) - E[K \mid S_T > K]Pr(S_T > K)\\
- & =E[\widetilde S_T \mid S_T > K] Pr(S_T > K) - KPr(S_T > K)
+\mathbb{E}[\tilde C_T] &= \mathbb{E}[\widetilde S_T - K \mid S_T > K] \cdot Pr(S_T > K)\\
+ & =\mathbb{E}[\tilde S_T \mid S_T > K] \cdot Pr(S_T > K) - \mathbb{E}[K \mid S_T > K] \cdot Pr(S_T > K)\\
+ & =\mathbb{E}[\tilde S_T \mid S_T > K] \cdot Pr(S_T > K) - K \cdot Pr(S_T > K)
 \end{split}
 \end{equation} 
 
-- Result does not depend on asset price distribution
+- Note that the result does not depend on asset price distribution
 
 
 # Expected value for Call option
 
 - Under lognormality, expected value is
 
-$$E[\widetilde C_T] = Se^{(\alpha - \delta)T}N(d_1) - KN(d_2)$$
+$$E[\tilde{C}_T] = Se^{(\alpha - \delta)T}N(d_1) - KN(d_2)$$
 
-$$where $$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 &= \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
-d2 &= d1 - \sigma \sqrt{T}
+d_1 &= \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
+d_2 &= d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
-## Standard Normal Distribution $N(d)$
+# Standard Normal Distribution $N(d)$
 
 - Use $z$ to represent a random variable that has a standard normal distribution
 
-$$E[\widetilde Z] = 0 $$
-$$Var(\widetilde Z) = 1$$
+$$\mathbb{E}[\tilde Z] = 0 \text{ and } Var(\widetilde Z) = 1$$
 
 - The value of the cumulative normal distribution $N(d)$ equals to the probability $P(z < d)$ of a number $z$ drawn from the normal distribution to be less than $d$
 
-$$N(d) = \int _{-\infty}^{d} \frac{1}{\sqrt{2 \pi}} e^-{\frac{1}{2}x^2dx}$$
+$$N(d) = \int _{-\infty}^{d} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2}x^2}dx$$
 
 - $N(- \infty) = 0$ and $N(\infty) = 1$
 - Normal density is symmetric
@@ -88,7 +132,7 @@ $$N(-d) = 1 - N(d)$$
 - $N(d)$ is cumulative normal probability. Area under curve to left of $d$
 - In Excel, use **"=NORMSDIST(d)"**
 
-```{r fig.cap='Cumulative Standard Normal'}
+```{r fig.cap='Cumulative Standard Normal', echo=FALSE, out.width = '60%', fig.align = "center"}
 library(ggplot2)
 
 x = seq(from = -3, to = 3, length.out = 100)
@@ -120,18 +164,18 @@ ggplot(data = df, aes(x = x, y = y)) +
 
 - Take present value of expected future value to get European-style call formula
 
-$$c = e^{-rT}E[\widetilde C_T]$$
+$$c = e^{-rT}\mathbb{E}[\tilde{c}_T]$$
 
 - Thus,
 
 $$c = Se^{(-r + \alpha - \delta)T}N(d_1) - Ke^{-rT}N(d_2)$$
 
-$$where$$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
-d2 & = d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d_2 & = d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
@@ -144,16 +188,16 @@ $$c = SN(d_1) - Ke^{-rT}N(d_2)$$
 ## Futures option valuation
 
 - Black (1975) values call on futures
-- Set $\alpha = r$ and $\delta = 0$
+- Set $\alpha = 0$ and $\delta = 0$
 
 $$c = e^{−rT}[F N(d_1) − KN(d_2)]$$
 
-$$where $$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{F}{K}) + \frac{1}{2}\sigma^2T}{\sigma \sqrt{T}} \\
-d2 & = d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{F}{K}) + \frac{1}{2}\sigma^2T}{\sigma \sqrt{T}} \\
+d_2 & = d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
@@ -165,12 +209,12 @@ d2 & = d1 - \sigma \sqrt{T}
 
 $$c = Se^{-\delta T}N(d_1) - Ke^{-rT}N(d_2)$$
 
-$$where$$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
-d2 & = d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d_2 & = d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
@@ -181,12 +225,12 @@ d2 & = d1 - \sigma \sqrt{T}
 
 $$c = Se^{-r_f T}N(d_1) - Ke^{-r_dT}N(d_2)$$
 
-$$where$$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{S}{K}) + (r_d - r_f + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
-d2 & = d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{S}{K}) + (r_d - r_f + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d_2 & = d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
@@ -197,21 +241,20 @@ d2 & = d1 - \sigma \sqrt{T}
 
 $$c = Se^{-\delta T}N(d_1) - Ke^{-rT}N(d_2)$$
 
-$$where$$
+- where
 
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
-d2 & = d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d_2 & = d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
 - Re-arrange expression for upper integral limit 
 
-
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
+d_1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
  & = \frac{ln(\frac{Se^{-\delta T}}{Ke^{-rT}})+ \frac{1}{2}\sigma ^2 T}{\sigma \sqrt{T}}
 \end{split}
 \end{equation} 
@@ -232,11 +275,13 @@ p & = Ke^{-rT} - Se^{-\delta T} + C \\
 - BSM value of European-style put is
 
 $$P = Ke^{-rT}N(-d_2) - S^{-\delta T}N(-d_1)$$
-$$where$$
+
+- where
+
 \begin{equation} 
 \begin{split}
-d1 & = \frac{ln(\frac{Se^{-\delta T}}{Ke^{-rT}}) + \frac{1}{2}\sigma ^2 T}{\sigma \sqrt{T}} \\
-d2 &= d1 - \sigma \sqrt{T}
+d_1 & = \frac{ln(\frac{Se^{-\delta T}}{Ke^{-rT}}) + \frac{1}{2}\sigma ^2 T}{\sigma \sqrt{T}} \\
+d_2 &= d_1 - \sigma \sqrt{T}
 \end{split}
 \end{equation} 
 
@@ -376,7 +421,7 @@ $$\hat \sigma_t = \sqrt{\sum_{i=1}^{n} \left[\frac{(1 - \lambda)\lambda^{i-1}}{\
   - [Historical Volatility.xlsx](https://github.com/hyunyulhenry/bae_derivatives/raw/master/Excel/07%20Historical%20Volatility.xlsx)
   - Sheet : Historical Volatility
 
-```{r}
+```{r, echo=FALSE}
 library(magrittr)
 library(knitr)
 library(kableExtra)
@@ -396,7 +441,7 @@ data.frame(
   - Historical Volatility.xlsx
   - Sheet : EWMA
   
-```{r}
+```{r, echo=FALSE}
 data.frame(
     V1 = c('0.25', '0.50', '0.75'),
     V2 = c('0.35%', '0.51%', '0.64%'),
