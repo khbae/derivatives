@@ -1,0 +1,456 @@
+---
+title: "07 Black Scholes Options Pricing"
+
+---
+
+# Purpose
+
+Develop European-style option valuation formula
+
+- The Black-Scholes formula is a limiting case of the binomial formula(infinitely many periods) for the price of a European option.
+- Called "Black-Scholes" or "Black-Scholes/Merton" model
+
+# Black-Scholes Assumptions
+
+## Assumptions about stock return distribution
+
+- Continuously compounded returns on the stock are normally distributed and independent over time, i.e. stock prices are log-normally distributed.
+- The volatility of continuously compounded returns is known and constant
+- Future dividends are known, either as dollar amount or as a fixed dividend yield
+
+## Assumptions about the economic environment
+
+- The risk-free rate is known and constant
+- There are no transaction costs or taxes
+- It is possible to short-sell costlessly and to borrow at the risk-free rate
+
+# Black-Scholes Model
+
+- Under risk-neutrality, current call value is
+$$c = e^{-rT}E[\widetilde C_T]$$
+- $E[\widetilde C_T]$ is the expected terminal call price based on asset price distribution
+- Terminal call value is
+
+\[
+  \widetilde C_T = 
+\left\{
+\begin{aligned}
+& \widetilde S_T - K, & if \quad S_T\ge K \\
+& 0, & if \quad S_T \le K
+\end{aligned}
+\right.
+\]
+
+- Expected terminal call value of exercise price K is
+
+\begin{equation} 
+\begin{split}
+E[\widetilde C_T] &= E[\widetilde S_T - K \mid S_T > K]Pr(S_T > K)\\
+ & =E[\widetilde S_T \mid S_T > K]Pr(S_T > K) - E[K \mid S_T > K]Pr(S_T > K)\\
+ & =E[\widetilde S_T \mid S_T > K] Pr(S_T > K) - KPr(S_T > K)
+\end{split}
+\end{equation} 
+
+- Result does not depend on asset price distribution
+
+
+# Expected value for Call option
+
+- Under lognormality, expected value is
+
+$$E[\widetilde C_T] = Se^{(\alpha - \delta)T}N(d_1) - KN(d_2)$$
+
+$$where $$
+
+\begin{equation} 
+\begin{split}
+d1 &= \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
+d2 &= d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+## Standard Normal Distribution $N(d)$
+
+- Use $z$ to represent a random variable that has a standard normal distribution
+
+$$E[\widetilde Z] = 0 $$
+$$Var(\widetilde Z) = 1$$
+
+- The value of the cumulative normal distribution $N(d)$ equals to the probability $P(z < d)$ of a number $z$ drawn from the normal distribution to be less than $d$
+
+$$N(d) = \int _{-\infty}^{d} \frac{1}{\sqrt{2 \pi}} e^-{\frac{1}{2}x^2dx}$$
+
+- $N(- \infty) = 0$ and $N(\infty) = 1$
+- Normal density is symmetric
+
+$$N(-d) = 1 - N(d)$$
+
+- $N(d)$ is cumulative normal probability. Area under curve to left of $d$
+- In Excel, use **"=NORMSDIST(d)"**
+
+```{r fig.cap='Cumulative Standard Normal'}
+library(ggplot2)
+
+x = seq(from = -3, to = 3, length.out = 100)
+y = dnorm(x, mean  = 0, sd = 1)
+df = data.frame(x, y)
+
+ggplot(data = df, aes(x = x, y = y)) +
+  geom_line() +
+  xlab('Unit Normal Variable') +
+  ylab('Probability') +
+  geom_ribbon(
+    data = subset(df, x <= 1.6),
+    aes(ymax = y),
+    ymin = 0,
+    fill = "blue",
+    colour = NA,
+    alpha = 0.2
+  ) +
+  annotate("text", x = 0, y = 0.15, label = "N(d)") +
+  geom_segment(data= df, mapping=aes(x=1.6, y=0.25, xend=1.6, yend=0),
+               arrow=arrow(), size = 1, color="blue") +
+  annotate("text", x = 1.6, y = 0.28, label = "d") +
+  ggtitle('Cumulative Standard Normal') +
+  theme_classic() +
+  scale_y_continuous(expand = c(0, 0, 0.1, 0)) 
+```
+
+## Call option price
+
+- Take present value of expected future value to get European-style call formula
+
+$$c = e^{-rT}E[\widetilde C_T]$$
+
+- Thus,
+
+$$c = Se^{(-r + \alpha - \delta)T}N(d_1) - Ke^{-rT}N(d_2)$$
+
+$$where$$
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{S}{K}) + (\alpha - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d2 & = d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+
+- Black and Scholes(1973) value call on non-dividend paying stock
+- Set $\alpha = r$ and $\delta = 0$
+
+$$c = SN(d_1) - Ke^{-rT}N(d_2)$$
+
+## Futures option valuation
+
+- Black (1975) values call on futures
+- Set $\alpha = r$ and $\delta = 0$
+
+$$c = e^{−rT}[F N(d_1) − KN(d_2)]$$
+
+$$where $$
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{F}{K}) + \frac{1}{2}\sigma^2T}{\sigma \sqrt{T}} \\
+d2 & = d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+
+## Stock index option valuation
+
+- Merton(1973) values call on index
+- Set $\alpha = r$
+
+$$c = Se^{-\delta T}N(d_1) - Ke^{-rT}N(d_2)$$
+
+$$where$$
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d2 & = d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+## Currency option valuation
+
+- Garman and Kohlhagen(1983) value call on foreign currency
+- Set $\alpha = r_d$ and $\delta = r_f$
+
+$$c = Se^{-r_f T}N(d_1) - Ke^{-r_dT}N(d_2)$$
+
+$$where$$
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{S}{K}) + (r_d - r_f + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d2 & = d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+
+# Black-Scholes/Merton(BSM) Model
+
+- BSM value of European-style call is
+
+$$c = Se^{-\delta T}N(d_1) - Ke^{-rT}N(d_2)$$
+
+$$where$$
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \\
+d2 & = d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+- Re-arrange expression for upper integral limit 
+
+
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{S}{K}) + (r - \delta + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}\\
+ & = \frac{ln(\frac{Se^{-\delta T}}{Ke^{-rT}})+ \frac{1}{2}\sigma ^2 T}{\sigma \sqrt{T}}
+\end{split}
+\end{equation} 
+
+- European-style put formula follows directly from
+  - Put-call parity
+  - European-style call formula
+  
+\begin{equation} 
+\begin{split}
+p & = Ke^{-rT} - Se^{-\delta T} + C \\
+ & = Ke^{-rT} -Se^{-\delta T} + Se^{-\delta T}N(d_1) - Ke^{-rT}N(d_2) \\
+ & = Ke^{-rT}[1-N(d_2)] -Se^{-\delta T}[1-N(d_1)] \\
+ & = Ke^{-rT}N(-d_2) - S^{-\delta T}N(-d_1)
+\end{split}
+\end{equation}
+
+- BSM value of European-style put is
+
+$$P = Ke^{-rT}N(-d_2) - S^{-\delta T}N(-d_1)$$
+$$where$$
+\begin{equation} 
+\begin{split}
+d1 & = \frac{ln(\frac{Se^{-\delta T}}{Ke^{-rT}}) + \frac{1}{2}\sigma ^2 T}{\sigma \sqrt{T}} \\
+d2 &= d1 - \sigma \sqrt{T}
+\end{split}
+\end{equation} 
+
+## Illustration
+
+- Value call and put options with $K = 40$ and $T = 3$ months
+- Assume stock price is 41.00, stock pays no dividends, and stock’s volatility rate is 30% annually
+- Assume interest rate is 8 % annually
+- Download excel file
+  - [Black Scholes Merton Option Pricing.xlsx](https://github.com/hyunyulhenry/bae_derivatives/raw/master/Excel/07%20Black%20Scholes%20Merton%20Option%20Pricing.xlsx)
+  - Sheet : Option Valuation
+  
+- $Se^{-\delta T} \ and \ Ke^{-rT}$
+$$Se^{-\delta T} = Se^{-0(3/12)} = 41$$
+$$Ke^{-rT} = Ke^{-0.08(3/12)} = 39.21$$
+- $N(d_1) \ and \ N(d2)$
+
+\begin{equation} 
+\begin{split}
+d_1 & = \frac{ln(\frac{41}{39.21}) + 0.5(0.3^2)(0.25)}{0.3 \sqrt{0.25}} = 0.373 \\
+d_2 & = 0.373 - 0.3 \sqrt{0.25} = 0.223
+\end{split}
+\end{equation} 
+
+$$N(d_1) = N(0.373) = 0.6454$$
+$$N(d_2) = N(0.223) = 0.5882$$
+
+- Call option price
+
+\begin{equation} 
+\begin{split}
+C & = SN(d_1) - Ke^{-rT}N(d_2) \\
+  & = 41(0.6454) - 39.21(0.5882) \\
+  & = 3.399
+\end{split}
+\end{equation}
+
+- Put option price
+
+\begin{equation} 
+\begin{split}
+P & = Ke^{-rT}N(-d_2) - SN(-d_1)  \\
+  & = 39.21(1 - 0.5882) - 41(1 - 0.6454) \\
+  & = 1.607
+\end{split}
+\end{equation} 
+
+## Applying the model
+
+- To use BSM formula to value options, we need estimates of
+  - asset price : $S$ 
+  - exercise price : $K$
+  - time to expiration : $T$
+  - income rate : $\delta$
+  - interest rate : $r$
+  - volatility : $\sigma$
+  
+- Some parameters are terms of option contracts
+  - exercise price : $K$
+  - time to expiration : $T$
+  
+- Some parameters are easily accessible market prices
+  - asset price : $S$ $\rightarrow$ Use current bid/ask midpoint or last traded price
+  - income rate : $\delta$ $\rightarrow$ Use dividend yield rate, foreign interest rate, lease rate etc
+  - interest rate : $r$ $\rightarrow$ Use continuously compounded T-bill rate
+
+- One parameter is more troublesome to estimate than others
+  - volatility : $\sigma$
+- Estimating volatility
+  - Historical volatility
+  - Implied volatility
+  
+# Volatility
+
+- Volatility is unobservable
+- Option prices can be quite sensitive to volatility
+- One approach is to compute **historical volatility**: One problem with historical volatility is that expected future volatility can be different from historical volatility
+- Alternatively, we can calculate **implied volatility**, which is the volatility that, when put into BSM formula, yields the observed option price
+
+## Historical Volatility
+
+- The logarithmic function computes daily returns from daily prices
+$$r_{t+1} = ln(S_{t+1} / S_t)$$
+
+- Since returns are additive, annual return is
+$$r_{annual} = \sum_{t=1}^{252}r_t = \sum_{t=1}^{252}ln(S_t / S_{t-1}) = ln(S_{252} / S_0)$$
+
+- The variance of the annual return is
+$$Var(r_{annual}) = Var(\sum_{t=1}^{252}r_t)$$
+
+- Suppose that returns are uncorrelated over time and that each day has the same variance of returns
+$$Var(r_{annual}) = 252Var(r_t)$$
+
+- Taking the square root of both sides yields
+$$\sigma = \sqrt{252} \sigma_{daily}$$
+
+- The term $\sqrt{252}$ should be modified depending the frequency of data
+  - From monthly price data : $\sqrt{12}$
+  - From weekly price data : $\sqrt{52}$
+
+<div style="background-color:#F7F7F7;padding: 5px">
+1. Take observations $S_0, S_1, \dots , S_T$ at interval of $\Delta t$ years. (e.g. for daily data $\Delta t = 1/252$)
+2. Calculate the continuously compounded return in each interval as
+$$r_t = ln(S_t/S_{t−1}) \ for \ t = 1, 2, \dots , T$$
+3. Calculate the standard deviation, $\hat \sigma$, of the $r_t$’s
+4. The annualized historical volatility is
+$$\sigma = \frac{1}{\sqrt{\Delta t}} \hat \sigma$$
+</div>
+
+- Compute mean return from data. Use **"=AVERAGE()"**
+$$\hat \mu = \frac{1}{T} \sum_{t=1}^{T}r_t$$
+
+- Compute standard deviation. Use **"=STDEV()"**
+$$\hat \sigma = \sqrt{\frac{1}{T-1}\sum_{t=1}^{T}(r_t - \hat \mu)^2}$$
+
+- To annualize volatility, multiply by square root of number of calendar days(months, weeks, etc. ) in one year
+
+### Historical Volatility-EWMA
+- Computing volatility from standard deviation assumes the constant volatility through time
+- Volatility appears to be changing over time
+- If volatility is changing, we want to emphasize more recent observations
+- One way to consider time-varying volatility is to compute an *Exponentially Weighted Moving Average(EWMA)* of the squared stock returns 
+
+- Equal weighted squared returns
+$$\hat \sigma = \sqrt{\frac{1}{T} \sum_{t=1}^{T} r_{t}^{2}} $$
+
+- Exponentially weighted moving average volatility
+$$\hat \sigma_t = \sqrt{\sum_{i=1}^{n} \left[\frac{(1 - \lambda)\lambda^{i-1}}{\sum_{j=1}^{n}(1 - \lambda)\lambda^{j-1}} \right]r_{t-i}^{2}}$$
+  - The lower is the value of λ, the higher is the weight placed on the most recent data
+
+- Compute historical volatilities for AAPL
+- Download five-year daily price data from http://finance.yahoo.com
+- Use the **adjusted price** series which are close prices adjusted for dividends and stock-splits
+  - If there are no adjusted prices, you should adjust observed closed prices for cash dividends and stock splits after getting the distribution information
+- Based on adjusted close prices, compute continuously compounded returns
+- Download excel file
+  - [Historical Volatility.xlsx](https://github.com/hyunyulhenry/bae_derivatives/raw/master/Excel/07%20Historical%20Volatility.xlsx)
+  - Sheet : Historical Volatility
+
+```{r}
+library(magrittr)
+library(knitr)
+library(kableExtra)
+
+data.frame(
+    V1 = c('All Date', 'One year', '90 days', '30 days'),
+    V2 = c('1,257', '251', '90', '30'),
+    V3 = c('1.69%', '1.40%', '1.26%', '0.95%'),
+    V4 = c('26.85%', '22.20%', '20.04%', '15.05%')
+  ) %>% kable(booktabs = T, escape = F, align = "r",
+      caption = "Estimates depend on length of return history",
+      col.names = c('Data Length', 'N', 'StDev (Daily)', 'StDev (Annualized)')) %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position")) 
+```
+
+- Download excel file
+  - Historical Volatility.xlsx
+  - Sheet : EWMA
+  
+```{r}
+data.frame(
+    V1 = c('0.25', '0.50', '0.75'),
+    V2 = c('0.35%', '0.51%', '0.64%'),
+    V3 = c('5.56%', '8.11%', '10.20%')
+  ) %>% kable(booktabs = T, escape = F, align = "r",
+      caption = "Volatility of Apple returns appeared to be lower later
+in the year",
+col.names = c('$\\lambda$', 'EWMA (Daily)', 'EWMA (Annualized)')) %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position")) 
+```  
+
+## Implied Volatility
+
+- Implied volatility is computed from observed option prices
+- Set option prices equal to formula value and solve for $\sigma$
+
+$$c = f(S, K, T, r, \delta, \sigma)$$
+
+  - $c$ : observed call option price
+  - $f()$: BSM formula
+  - $S$ : observed stock price
+  - $K$  and T : contract parameters
+  - $r$ : risk-free rate
+  - $\delta$ : dividend yield
+  
+- [Download AAPL option prices from CBOE website](http://www.cboe.com/DelayedQuote/QuoteTableDownload.aspx)
+- Download excel file
+  - [Implied Volatility.xlsx](https://github.com/hyunyulhenry/bae_derivatives/raw/master/Excel/07%20Implied%20Volatility.xlsx)
+  - Sheet : IV
+  
+- Some practical uses of implied volatility include
+  - Use the implied volatility from an option with an observable price to calculate the price of another option on the same underlying asset
+  - Use implied volatility as a quick way to describe the level of options prices on a given underlying asset: you could quote option prices in terms of volatility, rather than as a dollar price
+  - Checking the uniformity of implied volatilities across various options on the same underlying assets allows one to verify the validity of the pricing model in pricing those options
+
+# Summary
+
+<div style="background-color:#F7F7F7;padding: 5px">
+
+- Use risk-neutrality and lognormal asset price distribution to value European-style options
+  - Black-Scholes stock option formula
+  - Black futures option formula
+  - Merton constant dividend yield option formula
+  - Garman/Kohlhagen currency option formula
+  
+- The contribution of Black-Scholes was not the particular formula but rather the appearance of the risk-free rate in the formula
+
+- Applying option valuation models require estimates of
+  - exercise price($K$) and time to expiration($T$)
+  - underlying asset price($S$)
+  - income rate ($\delta$)
+  - interest rate ($r$)
+  - volatility($\sigma$)
+    - Historical volatility
+    - Implied valatility
+    
+</div>
