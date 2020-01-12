@@ -1,0 +1,457 @@
+---
+title: "Lecture 1. Introduction"
+output: html_document
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 18px;
+      font-family: "Times New Roman", Times, serif;
+  }
+td {  /* Table  */
+  font-size: 20px;
+}
+h1.title {
+  font-size: 24px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 22px;
+  color: DarkBlue;
+}
+h2 { /* Header 2 */
+    font-size: 22px;
+  color: DarkBlue;
+}
+h3 { /* Header 3 */
+  font-size: 22px;
+  font-family: "Times New Roman", Times, serif;
+  color: DarkBlue;
+}
+code.r{ /* Code block */
+    font-size: 20px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 20px;
+}
+</style>
+
+# Contracts and Martets
+
+* Purpose
+  + What are derivatives?
+  + Why do derivatives exist?
+  + Evolution of derivatives markets
+  
+ 
+# Derivatives Contracts
+* Derivatives contract or derivative
+  + A financial instrument that has a value **derived** from the value(or price) of another asset, which is known as the **underlying**
+  + When the price of the underlying changes, the value of the derivative also change. 
+  + A derivative is not a product. It is a contract that derives its value from changes in the price of the underlying. 
+* Underlying Assets
+  + Stock index futures derives its value from stock portfolio
+  + Currency option derives its value from exchange rate
+
+
+# Underlying Asset vs. Derivatives
+
+```{r pressure, echo=FALSE, message=FALSE}
+if(!require(ggplot2)){install.packages("ggplot2");library(ggplot2)}
+
+
+#./ 현재 위치
+#../ 폴더 한개 나가기
+Kospi_future = read.csv("./data/Kospi_futures.csv",stringsAsFactors = F)
+
+Kospi200 = read.csv("./data/Kospi200.csv",stringsAsFactors = F)
+
+
+data1 = Kospi_future[,c(1,2)]
+names(data1) = c("date","price")
+data1$type = rep("Kospi_future",nrow(data1))
+data2 = Kospi200[,c(1,2)]
+names(data2) = c("date","price")
+data2$type = rep("Kospi200",nrow(data2))
+
+data_f = rbind(data1,data2)
+data_f$date = as.Date(data_f$date)
+ggplot(data = data_f, aes(x = date, y = price, colour = type)) + 
+   geom_line() + ggtitle("KOSPI 200 INDEX (UNDERLYING) VS. KOSPI 200(FUTURES)") +
+   theme(plot.title=element_text(face="bold", size=10, vjust=2, color="blue"))
+
+
+
+# Underlying Asset vs. Derivatives
+treasury_bound = read.csv("./data/treasury_bound.csv",stringsAsFactors = F)
+
+data = treasury_bound[,c(1,2)]
+names(data) = c("date","price")
+data$date = as.Date(data$date)
+data$price = as.numeric(gsub(",","",data$price))
+data = data[order(data$date),]
+ggplot(data = data, aes(x = date, y = price)) + 
+   geom_line() + ggtitle("Korea Treasury Bond 3-year vs KTB3 Futures") +
+   theme(plot.title=element_text(face="bold", size=10, vjust=2, color="blue"))
+```
+
+# Underlying Asset vs. Derivatives
+* Should underlying price and derivatives price be same?
+  + Why? Why not? 
+* If two prices are not same, how do investors respond? 
+  + What are their optimal strategies
+* Some people hold underlying assets in their hands but some people do not
+  + Are their trading behavior same or different?
+
+
+# Financial Markets
+* The trading of a financial asset involves at least four discrete steps
+  + A buyer and a seller must locate one another and agree on a price
+  + The trade must be cleared
+    - The obligations of each party are specified
+  + The trade must be settled
+    - The buyer and the seller must deliver the cash or securities necessary to satisfy their obligations in the required period of time
+  + Ownership records are updated
+
+
+# Financial Markets
+* Much trading of financial claims takes place on **organized exchanges**
+  + In the past, the exchange was solely **a physical location** where traders would buy and sell.
+  + Such in-person venues have largely been replaced by electronic networks that provide **a virtual trading venue**
+* After a trade has taken place, a **clearinghouse** matches the buyers and sellers, keeping track of their obligations and payments
+  + To facilitate these payments and to help manage credit risk, a derivatives clearinghouse typically imposes itself in the transaction, becoming the buyer to all sellers and the seller to all buyers
+
+
+# Evolution of the NYSE
+photo
+
+
+# Clearing house
+photo
+
+
+# Exchange-traded (Listed) Derivatives contracts
+* Stock index : S&P500 index, Euro Stoxx 50 index, Nikkei 225, KOSPI200, Dow-Jones industrial, DAX, NASDAQ, Russell 2000, S&P sectors(healthcare, utilities, technologies, etc.)
+* Interest rate : 30-year U.S. Treasury bond, 10-year U.S. treasury notes, Fed Funds rate, Euro-bond, LIBOR
+* Foreign exchange : Euro, Japanese Yen, British pound, Swiss Franc, Australian dollar, Canadian dollar, Korean Won
+* Commodity : Oil, natural gas, gold, copper, aluminum, corn, wheat, lumber, hogs, cattle, milk
+* Other : Heating and cooling degree days, credit, real-estate, volatility
+
+# Diversification of Futures Markets in 2007
+photo
+
+
+# Diversification of Futures Markets in 2012
+
+photo
+
+# OTC Markets
+* It is possible for large traders to trade many financial claims directly with a dealer bypassing organized exchanges.
+  + Such trading is said to occur in the **over-the-counter**(OTC) market
+* Exchange activity is public and highly regulated
+  + OTC trading is not easy to observe or measure and is generally less regulated
+  + For many categories of financial claims, the value of OTC trading is greater than the value traded on exchanges
+
+
+# OTC Markets
+* Over-the-counter (OTC) or off-exchange trading is to trade financial instruments such as stocks, bonds, commodities or derivatives directly between two parties without going through an exchange or other intermediary
+  + The contract between the two parties are privately negotiated
+  + The contract can be tailor-made to the two parties' preferences
+  + OTC markets are generally uncontrolled, unregulated and heavy very few laws. 
+
+
+# International Derivatives Market (from Deutche Bank)
+photo
+
+
+# OTC Derivatives (from Deutche Bank)
+photo
+
+
+# What makes OTC derivatives market risky?
+* Non-standard products are traded here
+* OTC derivatives are less standard structure and are traded bilaterally
+* OTC derivatives are significant in the asset classes such as interest rate, foreign exchange, equities and commodities
+* Counter-party risk and credit risk 
+* These characteristics of OTC markets dampen the 2008 financial crisis
+
+
+# Global financial crisis in 2008 and collapse of OTC markets
+* In September 2009, the G20 Pittsburgh summit has agreed upon four issues in strengthen the regulation on OTC derivatives trading which caused the bankruptcy of Lehman Brothers, triggering the global financial crisis
+
+
+# Improving the OTC derivatives markets
+photo
+
+# General OTC Transaction vs. CCP-cleared OTC transactions
+photo
+
+# Bilateral vs Central Clearing
+photo
+ 
+# Derivative Contracts 
+ 
+## Derivatives Contracts
+* Only two basic types of derivatives contracts
+  + Forward (or Futures : special case of a forward contract)
+  + Option
+* Everything else is either
+  + Variation of forward or option
+  + Portfolio of forwards and/or options
+
+
+## Forward Contracts
+* Binding agreement(obligation) to buy or sell an underlying asset in the future, at a price set today. 
+* Futures contracts are the same as forwards in principle except for some institutional and pricing differences.
+* Forward contract specifies
+  + Features and quantity of the asset to be delivered.
+  + Delivery logistics, such as time, date, and place.
+  + Price that buyer will pay at the time of delivery.
+ 
+
+# Forward Payoff at Maturity
+photo
+ 
+ 
+# Illustration
+* Consider two-day forward contract on wheat.
+* Assume current price is $ 5.50 per bushel.
+* If you buy forward today and hold it to maturity, what is your profit?
+  + You bought forward, so you are long wheat.
+  + You agreed to buy bushel of wheat in 2 days for $5.50
+
+\[ f_{0,2} = 5.50\]
+
+
+# Illustration
+* Cash Flows
+
+|Day | 0  | 1  | 2  |
+|:----|:----|:----|:----|
+Long Forward | 0     |    | $\tilde{f}_{2,2}$ - 5.5 
+|    |    |    |    |
+
+
+* No investment today (At time 0)
+* $\tilde{f}_{2,2} - 5.5$ : Amount you will pay on day 2.
+* $\tilde{f}_{2,2}$ : Price of forward contract at expiration.
+* At expiration, forward price must equal asset price. ($\tilde{f}_{2,2} = \tilde{S}_{2}$)
+* If asset price is $6.00, profit is $0.50. 
+
+
+# Forward payoffs
+* Forward payoffs at time $T$. 
+  + Payoff on long forward = $\tilde{f}_{T,T} - {f}_{0,T} = \tilde{S}_{T} - {f}_{0,T}$
+  + Payoff on short forward = $-(\tilde{f}_{T,T} - {f}_{0,T}) = -(\tilde{S}_{T} - {f}_{0,T})$
+
+# Delivery Settlement
+Day   & 0     & 1     & 2 \\
+
+Long Forward & 0     &       & 6.0 - 5.5 = 0.5 \\
+
+* pay $5.5 on day 2
+* take physical delivery of wheat
+* sell wheat in cash market at $6.0
+
+ 
+ 
+#Cash Settlement
+Day   & 0     & 1     & 2 \\
+
+Long Forward & 0     &       & 6.0 - 5.5 = 0.5 \\
+ 
+* seller pays you net amount, $0.5, on day 2.
+* No costs or uncertainty of physical delivery
+
+
+
+# Option Contracts
+* right to buy or sell asset at specified price, $X$, by or on specified date
+* call is right to buy at $X$
+  + Payoff on long call at $T$ = $\max (0, \tilde{S}_{T} - X)$
+  + Payoff on short call at $T$ = $-\max (0, \tilde{S}_{T} - X)$
+* put is right to sell at $X$
+  + Payoff on long put at $T$ = $\max (0, X - \tilde{S}_{T})$
+  + Payoff on short put at $T$ = $-\max (0, X - \tilde{S}_{T})$
+
+
+# Call Option Payoff at Maturity
+photo
+
+
+# Put Option Payoff at Maturity
+photo
+
+### Derivatives Markets
+
+
+# Types of traders
+* Hedgers
+  + Use derivatives to reduce risk that they face from potential future movements in the market variables
+  + They provide economic balance to the market
+* Speculators - day traders, position traders, or scalpers
+  + Use derivatives to bet on future direction of the market variables
+  + They provide liquidity and depth to the market
+* Arbitrageurs
+  + Take offsetting positions in two or more instruments to lock in a profit 
+  + They help in brining about price uniformity and discovery
+
+
+# Hedging or Speculating
+* Are you hedging or speculating?
+  + If you have no other exposure to price of wheat, speculating price will rise.
+  + Suppose you produce breakfast cereal and require wheat as an input. Have you committed to selling your product at fixed price or does competition prevent you from raising price? 
+    - If so, hedging.
+    - If not, speculating. 
+
+
+# Open Interest
+* Open interest is number of contracts outstanding at given point in time. 
+* Since each trade of a contract has both a buyer and a seller, a buyer-seller pair counts as one contract.
+* Open interest measures the number of buyer-seller pairs.
+
+
+# Open Interest
+* How to identify futures market participants? $\rightarrow$ Go to website 
+<http://www.cftc.gov>
+[link](www.cftc.gov)
+
+  + Choose "Market reports" menu and then
+  + Select "Commitments of Traders"
+  + Scroll down Commitment of Traders to find "Current Disaggregate Reports"
+  + Choose "Long Format" to see report
+
+
+
+# Open Interest
+* Producer/Merchant/Processor/User : hedgers
+* Swap Dealer: hedgers
+* Money Manager: might be speculators
+* Spreading : net of trader who is both long and short.
+
+
+# Open Interest
+photo
+
+
+# The uses of Derivatives
+* **Risk management** : Derivatives are a tool for companies and other users to reduce risks
+* **Speculation** : Derivatives can serve as investment vehicles
+* **Reduce transaction costs** : Sometimes derivatives provide a lower cost way to undertake a particular financial transaction
+* **Regulatory arbitrage** : It is sometimes possible to circumvent regulatory restrictions, taxes, and accounting rules by trading derivatives
+
+
+# Why do derivatives markets exist?
+* Fund manager believes that U.S. stock market fall over next month
+  + Sell stock index futures : Costs about 5\% of selling portfolio stocks
+* Fund manager believes that South African stock market is underpriced
+  + Buy stock index futures : Less expensive than buying stocks, and circumvent regulatory constraint (i.e. foreign investors cannot hold South African stocks)
+
+
+# Why do derivatives markets exist?
+* Equity underwriter wants to get protection against decline in market. 
+  + Sell stock index futures or buy index put : Market for underlying does not exist
+* Firms want to eliminate interest rate risk of its floating-rate debt, but does not want to pay huge flotation costs of issuing fixed-rate debt.
+  + Enter "floating-for-fixed" rate swap agreement : Costs about 1/50 th
+* Farmer wants to lock-in price at which he can sell his wheat crop in fall
+  + Sell wheat futures contracts : Has no ability to sell crop that has not yet been harvested. 
+
+
+# Evolution of derivative markets
+* Derivatives have been traded since ancient Greeks (350BC)
+  + options on olive presses
+  + over-the-counter(OTC) contracts
+* Key attributes of OTC derivatives:
+  + Trades between consenting parties
+  + Limitless contract flexibility
+  + Lack transparency
+  + Unregulated
+
+
+# Evolution of derivative markets
+* Key features of derivatives exchange markets
+  + To promote market depth and liquidity
+    - Centralized markets
+    - Standardized contracts
+  + To promote market integrity 
+    - Clearinghouse
+    - System of margins or performance bonds
+    - Transparency
+    - Regulated
+
+# History
+* 1865-1933 : Other agricultural futures exchanges are created.
+  + 1870 : New York Cotton Exchange
+  + 1882 : Coffee Exchange
+  + 1878 : London Corn Trade Association
+  + 1904 : Winnipeg Commodity Exchange, Canada
+* 1933-1972 : Futures contracts on other physical commodities are introduced.
+  + 1933 : Commodity Exchange (Siver)
+  + 1952 : London Metal Exchange (Lead)
+  + 1961 : Chicago Mercantile Exchange (Pork Bellies)
+
+
+# History
+* 1970s : First decade of major innovation.
+  + 1972 : First futures on financial asset (CME lists currency futures)
+  + 1973 : First exchange-traded options (CBT forms CBOE to list call options on stocks)
+  + 1975 : First interest rate futures (CBT lists GNMA futures)
+
+
+# History
+* 1980s : Second decade of major innovation.
+  + 1981 : First futures cash-settlement futures (CME lists Eurodollar futures).
+  + 1982 : First stock index futures (KCBT lists Value Line index futures, CME lists S\&P 500 futures)
+  + 1982-83 : First exchange-traded on assets other than stocks (Stock indexes, bonds, currencies, and futures)
+
+
+# Re-emergence of OTC markets
+* 1990s saw re-emergence of OTC markets
+  + Emphasis on financial assets.
+    - Banks are actively involved in cash markets for stocks, bond, and currencies
+    - Banks understand customer needs and can design contracts to fit needs without regulatory consent. 
+* Technology (e.g. high-speed communication and computers) reduce need for centralized markets. 
+
+
+# Korea
+* 1996 : Stock index futures 
+* 1997 : Stock Index options
+* 1999 : KOFEX (Dollar, CD, Gold futures and Dollar options)
+* 2002 : Equity options
+* 2008 : Lean Hog futures
+* 2008 : Single stock futures
+* 2010 : Mini-Gold futures 
+
+
+### Summary
+
+# Summary
+* Derivatives are used to risk allocation
+  + Hedging : risk-reduction, reducing commodity, equity, interest rate, or currency price risk by taking opposite position in derivatives markets. 
+  + Speculating : risk-enhancement, taking on price risk to profit from directional view. 
+* Why do derivatives markets exist?
+  + Trading costs/restrictions in spot market. 
+
+
+# Evolution of Derivatives Markets
++ Started OTC thousands of years ago.
++ Organized as exchange markets in 1800s.
++ Significant innovation in 1970s and 1980s.
++ Return to significant OTC trading in 1990s. 
+
+
+* Exchange markets
+  + standardized contracts
+  + clearinghouse and margins
+  + transparency
+  +  regulated
+* OTC markets
+  + limitless flexibility in contract design
+  + unregulated
+  + lack transparency
+  + credit risk
+
+
+
+
