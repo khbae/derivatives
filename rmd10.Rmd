@@ -1,0 +1,195 @@
+---
+title: "Untitled"
+author: "hyo"
+date: '2020 3 6 '
+output: html_document
+---
+---
+title: "Untitled"
+author: "hyo"
+date: '2020 3 5 '
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Binomial Option Pricing
+
+### American Options
+
+#### American Style options
+* Many standard and nonstandard options do not have analytical valuation equations (e.g. American-style options)
+* To value and measure risk, use approximation methods that include
+  + Binomial method
+  + Trinomial method
+  + Quadratic approximation method
+  + Finite Difference method
+
+
+#### American style options
+* American style option is an option that may be exercised at any time during its life.
+* By exercising, the option holder
+  + Receives the stock and thus receives dividends
+  + Pays stock price prior to expiration
+  + Loses the insurance implicit in the call against the possibility that the stock price will be less than the strike price at expiration
+
+
+#### American style options
+* The valuation of American options needs to compare
+  + The value of exercising immediately 
+  + The value of continuing to hold the option
+* The binomial method is well-suited to valuing American options
+  + easy to check at each node whether early exercise is optimal
+* The value of the option if it is exercised is given by $\max(S-K,0)$ if it is a call and $\max(K-S,0)$ if it is a put
+
+### Binomial Method
+
+#### Binomial Method
+* The valuation of American options proceeds as follows
+  + At each node, we check for early exercise 
+  + Value of the option is greater when exercised $\Rightarrow$ Assign the exercised value
+  + Value of the option is less when exercised $\Rightarrow$ Assign the value of the option unexercised
+  + Work backward through the tree as usual
+
+
+
+#### Binomial Method
+* Consider the following American-style call
+  + Asset price ($S$) : \$ 40 
+  + Volatility rate ($\sigma$): 20\% 
+  + Dividend rate ($\delta$) : 5 \% 
+  + Call option exercise price ($K$) : 40 
+  + Time to expiration ($T$) : 1
+  + Number of steps : 3 
+  + Time increment ($h$) : 1/3 
+  +  Risk-free rate ($r$) : 6 \% 
+
+
+#### Illustration
+* Binomial Method-American Option.xlsx}
+* Sheet : American Options.
+
+
+
+#### Illustration
+* Compute up-step and down-step CRR coefficients.
+\[ u = e^{0.2 \sqrt{1/3}} = 1.1224 \quad d=  e^{-0.2 \sqrt{1/3}} = 0.8909\]
+
+* Complete asset price lattice
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 56.559 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 50.391 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 44.896 \ \ \ \ \ \ \ \ \ 44.896 \] 
+\[ 40.000 \ \ \ \ \ \ \ \ \ \ \ \ 40.000  \] 
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 35.638 \ \ \ \ \ \ \ \ \ 35.638 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 31.751 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ 28.289 \] 
+    
+
+
+
+#### Illustration
+* Value option with $K = 40$ at expiration
+
+|Option Payoff | Asset Price |
+|:---:|:---:|
+|$\max(56.559 - 40, 0) = 16.559$ | 56.559 |
+|$\max(44.896 - 40, 0) = 4.896$ | 44.896 |
+|$\max(35.638 - 40, 0) = 0$ | 35.638 |
+|$\max(28.289 - 40, 0) = 0$ | & 28.289 |
+
+
+
+
+
+
+#### Illustration
+* Value option one step back in time by taking present value of expected future value
+* Risk Neutral probability $p^*$
+\[ p^* = \frac{e^{(0.06-0.05) (1/3)} - 0.8909}{1.1224-0.8909} = 0.4856\]
+
+
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  16.559 \ \]
+\[ \swarrow \   \]
+$10.351 = e^{-0.06} [(0.4856) 16.559  + (1-0.4856) 4.896]$  
+\[ \nwarrow \   \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  4.896 \ \]
+\[ \swarrow \   \]       
+$2.330 = e^{-0.06} [(0.4856) 4.896  + (1-0.4856) 0]$
+\[ \nwarrow \   \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  0.000 \ \]
+\[ \swarrow \   \] 
+$0.000$
+\[ \nwarrow \   \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  0.000 \ \]
+
+
+
+#### Illustration
+* For European option, continue iterative process. 
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 16.559 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 10.351 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 6.102 \ \ \ \ \ \ \ \ \ 4.896 \] 
+\[ 3.464 \ \ \ \ \ \ \ \ \ \ \ \ 2.2330  \] 
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2.2330 \ \ \ \ \ \ \ \ \ 0.000 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.000 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ 0.000 \] 
+
+* Call option price with exercise price $K=40$ at the maturity of 1 year is $3.464$
+
+
+#### Illustration
+* For American option, we need to compare continuing value with exercised value 
+
+
+|Exercised Value | Continuing Value | Decision |
+|:---:|:---:|:---:|
+|$\max(50.391-40,0) = 10.391 $ | $ 10.351$ |  Optimal to exercise|
+|$\max(40-40,0) = 0$ | $2.330$ |  No early exercise|
+|$\max(31.751-40,0) = 0$ | $0.000$ | No early exercise|
+
+
+* Replace $10.351$ with $10.391$ at node 2
+
+
+#### Illustration
+* Recalculate the option value at node 1
+\begin{eqnarray*}
+6.121 & = &  e^{-0.06} [ (0.4856) 10.391  + (1-0.4856) 2.330 ]\\
+1.109 & = &  e^{-0.06} [ (0.4856) 2.330  + (1-0.4856) 0.000 ]\\
+\end{eqnarray*}
+* Again, compare continuing option value with exercised value
+\begin{eqnarray*}
+6.121 & > & 4.896 = \max(44.896-40,0)  : \text{No early exercise}\\
+1.109 & > & 0.000 = \max(35.638-40,0)  : \text{No early exercise}
+\end{eqnarray*}
+
+
+#### Illustration
+* For American option, 
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 16.559 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 10.391 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 6.121 \ \ \ \ \ \ \ \ \ 4.896 \] 
+\[ 3.473 \ \ \ \ \ \ \ \ \ \ \ \ 2.330  \] 
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1.109 \ \ \ \ \ \ \ \ \ 0.000 \]
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.000 \]   
+\[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ 0.000 \] 
+
+* Call option price with exercise price $K=40$ at the maturity of 1 year is $3.473 > 3.464$
+* Value of early exercise premium is $3.473 - 3.464 = 0.009$
+
+
+#### Early exercise
+* The only difference in the binomial tree occurs at the $S_{uu}$ node, where the stock price is \$ 50.391
+  + The American option at that point is worth \$ 50.391 - \$40 = \$10.391, its early-exercise value
+  + The unexercised value is \$ 10.351
+  + The greater value of the option at that node ripples back through the tree
+* Thus, the American option is much valuable than the otherwise equivalent European option
+
+### Summary
+
+#### Summary
+* American option value is computed using binomial method
+  + Step 1 : Create asset price lattice.
+  + Step 2 : Decide on length of time increment $h$. 
+  + Step 3 : Value option at expiration 
+  + Step 4 : Step back one time increment ($h$) and take present value of expected future option 

@@ -1,0 +1,417 @@
+---
+title: "Untitled"
+author: "hyo"
+date: '2020 2 7 '
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Binomial Option Pricing
+
+#### Option Valuation
+* The binomial option pricing model enables us to determine the price of an option, given the characteristics of the underlying asset.
+* The binomial option pricing model assumes that the asset price in each period move only up or down by a specified amount
+* The binomial option pricing model is often referred to as the "Cox-Ross-Rubinstein (CRR) pricing model"
+
+### Risk-free hedge portfolio valuation
+
+* Begin by using simple binomial model 
+  + Consider a European call option on the stock of XYZ, with a \$40 strike price and 1 year to expiration
+  + XYZ does not pay dividends, and its current price is \$ 41.
+  + The continuously compounded risk-free interest rate is 8\%.
+
+### Risk-free hedge portfolio 
+\begin{itemize}
+\item Stock price in 1 year will be \$60 or \$30. 
+\begin{center}
+\begin{tabular*}{0.5\textwidth}{ccc}
+      &  $ \nearrow$     &  \$ 60  \\
+ \$ 41  &       &  \\
+      &  $ \searrow$     &  \$ 30  \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+
+
+### Risk-free hedge portfolio valuation
+
+\begin{itemize}
+\item Call values at expiration are known. 
+\begin{center}
+\begin{tabular*}{0.5 \textwidth}{ccc}
+      &  $ \nearrow$     &  \$ 20  \\
+ $c$  &       &  \\
+      &  $ \searrow$     &  \$ 0  \\
+\end{tabular*}%
+\end{center}
+
+\item Form portfolio by buying $\Delta$ units of asset and selling 1 unit of 1-year call options at price $c$
+\begin{center}
+\begin{tabular*}{0.5 \textwidth}{ccc}
+      &  $ \nearrow$     &  \$ $\Delta 60 - 20$  \\
+ $\Delta 41- c$  &       &  \\
+      &  $ \searrow$     &  \$ $\Delta 30$  \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+
+### Risk-free hedge portfolio valuation
+\begin{itemize}
+\item Set terminal values equal to one another (thereby creating risk-free hedge) and solve for $\Delta$.
+\begin{eqnarray*}
+\Delta 60 - 20 & = & \Delta 30 \\
+\Rightarrow \Delta & = & \frac{2}{3} 
+\end{eqnarray*}
+\item The value $2/3 $ is the \textit{delta} ($\Delta$) of the option: the number of shares that replicates the option payoff. 
+\end{itemize}
+
+
+### Risk-free hedge portfolio valuation
+\begin{itemize}
+\item Substitute into binomial lattice.
+\begin{center}
+\begin{tabular*}{ 0.5 \textwidth}{ccc}
+      &  $ \nearrow$     &  \$ $60 (2/3) - 20$  \\
+ $41 (2/3)- c$  &       &  \\
+      &  $ \searrow$     &  \$ $30 (2/3)$  \\
+\end{tabular*}%
+\end{center}
+\item Portfolio is risk-free because its terminal value (i.e., 20) is invariant to asset price.
+\begin{center}
+\begin{tabular*}{0.5 \textwidth}{ccc}
+      &  $ \nearrow$     &  \$ 20  \\
+ $41 (2/3)- c$   &       &  \\
+      &  $ \searrow$     &  \$ 20  \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+### Risk-free hedge portfolio valuation
+\begin{itemize}
+\item  $41 (2/3)- c$ invested in risk-free bonds would also have terminal value of $\$ 20$. 
+\item If risk-free rate over 1-year interval is 8\%, no arbitrage implies
+\begin{eqnarray*}
+41 (2/3)- c & = & 20 e^{-0.08} \\
+\Rightarrow c & = & \$ 8.871
+\end{eqnarray*}
+\end{itemize}
+
+\newpage
+#### Risk Neutral Pricing
+
+\begin{itemize}
+\item Risk-free hedge portfolio was formed without knowing probabilities.
+\item Implies that call value was derived without knowing investor risk/return preferences
+\end{itemize}
+* Since investor preferences are not required to value call, assume investors are risk-neutral
+
+  + Risk-neutral investors are indifferent between a sure thing and a risky bet with an expected payoff equal to the value of the sure thing
+  + Under risk-neutrality, all assets have expected return equal to risk-free interest rate.
+
+### Risk Neutral Pricing
+\begin{itemize}
+\item To value call under risk-neutrality, need to specify upstate ($p^*$) and downstate probabilities ($1-p^* $).
+\begin{center}
+\begin{tabular*}{0.5 \textwidth}{ccc}
+      &  $ \nearrow_{p^*}$     &  \$ 60  \\
+ $41$  &       &  \\
+      &  $ \searrow_{1-p^*}$     &  \$ 30  \\
+\end{tabular*}%
+\end{center}
+\item To identify implied risk-neutral probabilities $p^*$, equate expressions for terminal asset price and solve for $p^*$.
+\begin{eqnarray*}
+41 e^{0.08} & = & 60 p^* + 30 (1- p^*) \\
+p^* & = & 48.05\%
+\end{eqnarray*}
+\end{itemize}
+
+\newpage
+### Risk Neutral Pricing
+\begin{itemize}
+\item With risk-neutral probabilities known, value call using traditional approach (i.e., take PV of expected future value)
+\[ c = e^{-r T} E[\tilde{c}_T]\]
+\item Call values are known
+\[E[\tilde{c}_T] = 20 (0.4805) + 0 (1-0.4805) = 9.61\]
+\item Take PV of expected future value
+\[c = e^{-0.08} 9.61 = 8.871 \]
+\end{itemize}
+
+### Risk Neutral Pricing
+\begin{itemize}
+\item Two approaches lead to same result.
+\begin{itemize}
+\item risk-free hedge portfolio valuation
+\item risk-neutral valuation
+\end{itemize}
+\item Since risk-neutral valuation is simplest, use it. 
+\end{itemize}
+
+
+\newpage
+# Binomial Option Pricing
+## Risk Neutral Pricing
+
+### Binomial Method
+\begin{itemize}
+\item \underline{Step 1: } Create asset price lattice.
+\begin{itemize}
+\item Assume underlying asset price has discrete proportional jumps through option's life. 
+\item $u (>1)$ is up-step coefficient and $d (< 1)$ is down-step coefficient
+\end{itemize}
+\begin{center}
+\begin{tabular*}{0.5\textwidth}{ccccc}
+      &             &       & $\nearrow$      & $uuS$ \\
+      & $\nearrow$  & $uS$  & $\searrow$    &  \\
+$S$   &             &       &           & $udS$ \\
+      & $\searrow$  & $dS$  &  $\nearrow$      &  \\
+      &             &       & $\searrow$      & $ddS$ \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+### Binomial Method
+\begin{itemize}
+\item \underline{Step 2: } Decide on length of time increment $h$. 
+\begin{itemize}
+\item Setting time increment to one year : $h = 1$
+\item Setting time increment to one day : $h = 1/365$
+\item Setting time increment to one hour : $h = 1/(365\times 24 )$
+\end{itemize}
+\begin{center}
+\begin{tabular*}{0.5\textwidth}{ccccc}
+      &             &       & $\nearrow$      & $uuS$ \\
+      & $\nearrow$  & $uS$  & $\searrow$    &  \\
+$S$   &             &       &           & $udS$ \\
+      & $\searrow$  & $dS$  &  $\nearrow$      &  \\
+      &             &       & $\searrow$      & $ddS$ \\
+\multicolumn{3}{c}{$\xleftarrow{\hspace*{0.5cm}} h \xrightarrow{\hspace*{0.6cm}}$}   & & \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+\newpage
+### Binomial Method
+\begin{itemize}
+\item \underline{Step 3: } Value option at expiration. 
+\begin{itemize}
+\item $c_u = \max(uS-K, 0)$ and $c_d = \max(dS-K,0)$
+\item $c_{uu}= \max(u^2 S-K, 0), c_{ud} = \max(udS-K,0)$, and $c_{dd} = \max(d^2 S-K, 0)$
+\end{itemize}
+\begin{center}
+\begin{tabular*}{0.5\textwidth}{ccccc}
+      &             &       & $\nearrow$      & $c_{uu}$ \\
+      & $\nearrow$  & $c_u$  & $\searrow$    &  \\
+$c$   &             &       &           & $c_{ud}$ \\
+      & $\searrow$  & $c_d$  &  $\nearrow$      &  \\
+      &             &       & $\searrow$      & $c_{dd}$ \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+### Binomial Method
+\begin{itemize}
+\item \underline{Step 4: } Value option one step back in time by taking present value of expected future values. 
+\begin{itemize}
+\item $c_u = e^{-r h} [p^* c_{uu} + (1-p^*) c_{ud}]$
+\item $c_d = e^{-r h} [p^* c_{ud} + (1-p^*) c_{dd}]$
+\item $c = e^{-r h} [p^* c_{u} + (1-p^*) c_{d}]$
+\end{itemize}
+\begin{center}
+\begin{tabular*}{0.5\textwidth}{ccccc}
+      &             &       & $\nearrow$      & $c_{uu}$ \\
+      & $\nearrow$  & $c_u$  & $\searrow$    &  \\
+$c$   &             &       &           & $c_{ud}$ \\
+      & $\searrow$  & $c_d$  &  $\nearrow$      &  \\
+      &             &       & $\searrow$      & $c_{dd}$ \\
+      \multicolumn{5}{c}{$\xleftarrow{\hspace*{1.1cm}\text{Backward Induction}} $} \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+\newpage
+### Binomial Method
+\begin{itemize}
+\item  Risk-Neutral probabilities are identified by equating expressions for expected asset price
+\begin{eqnarray*}
+S e^{\alpha h} & = &  p^* u S + (1- p^*) d S \\
+\Rightarrow p^* & = & \frac{e^{\alpha h } - d}{ u-d}
+\end{eqnarray*}
+\begin{itemize}
+\item $\alpha = r$ : non-dividend paying stock
+\item $\alpha = r-\delta$ : dividend paying stock with dividend rate $\delta$
+\item $\alpha = r - \delta$ : currency with foreign risk-free rate $\delta$.  
+\item $\alpha = 0$ : futures contract
+\end{itemize}
+\end{itemize}
+
+### Choosing $u$ and $d$
+\begin{itemize}
+\item Coefficients and probabilities used in lattice are not unique. 
+\begin{itemize}
+\item Cox-Ross-Rubinstein(1979) binomial tree
+\[u = e^{\sigma \sqrt{h}} \quad d = e^{-\sigma \sqrt{h}}    \quad p^* = \frac{1}{2} + \frac{1}{2} \left( \frac{\alpha - 0.5 \sigma^2}{\sigma}\right)h \]
+\item Jarrow-Rudd(1983) lognormal binomial tree
+\[u = e^{(\alpha -0.5 \sigma^2)h + \sigma \sqrt{h}} \quad d = e^{(\alpha -0.5 \sigma^2)h - \sigma \sqrt{h}}    \quad p^* = \frac{1}{2}  \]
+\end{itemize}
+\end{itemize}
+
+\newpage
+### Finding $\Delta$
+\begin{itemize}
+\item Consider portfolio of buying $\Delta$ shares of asset and selling 1 unit of call options at price $c$. The value of the portfolio at time $h$ is 
+\begin{center}
+\begin{tabular*}{0.5 \textwidth}{ccc}
+      &  $ \nearrow$     &  $\Delta e^{\delta h} uS - c_u$  \\
+ $\Delta S - c$   &       &  \\
+      &  $ \searrow$     & $\Delta e^{\delta h} dS - c_d$   \\
+\end{tabular*}%
+\end{center}
+\item Solving for $\Delta$ by setting terminal values to one another, $\Delta$ is
+\[\Delta  = e^{-\delta h} \frac{c_u - c_d}{S(u-d)}\]
+\end{itemize}
+
+### Replicating Portfolio
+\begin{itemize}
+\item Plugging $\Delta$ into either $\Delta e^{\delta h} uS - c_u$ or $\Delta e^{\delta h} dS - c_d$ and discounting the value, we have
+\[ (\Delta S  - c) = - e^{-rh} \frac{uc_d - dc_u}{u-d} \]
+\item If we buy $\Delta$ shares of stock and buy a dollar amount of $B$, the cost for constructing portfolio is $ \Delta S + B$ where 
+\[B = e^{-rh} \frac{uc_d - dc_u}{u-d} \]
+\item The cost of creating the option is the net cash flow required to buy the shares and bonds. Thus, the cost of the option is $\Delta S + B$
+\[\Delta S + B = e^{-r h} \left( c_u \frac{e^{(r-\delta) h} -d }{u-d} + c_d \frac{u - e^{(r-\delta) h} }{u-d}\right) \]
+\end{itemize}
+
+\newpage
+### Illustration
+\begin{itemize}
+\item Asset price ($S$) : \$ 40 
+\item Volatility rate ($\sigma$): 20\% 
+\item Dividend rate ($\delta$) : 0 \% 
+\item Call option exercise price ($K$) : 40 
+\item Time to expiration ($T$) : 1
+\item Number of steps : 3 
+\item Time increment ($h$) : 1/3 
+\item Risk-free rate ($r$) : 6 \% 
+\end{itemize}
+
+### Illustration
+\begin{itemize}
+\item \underline{Simple Binomial.xlsx}
+\item Sheet : Binomial Option Pricing.
+\end{itemize}
+
+\newpage
+### Illustration
+\begin{itemize}
+\item Compute up-step and down-step CRR coefficients.
+\[ u = e^{0.2 \sqrt{1/3}} = 1.1224 \quad d=  e^{-0.2 \sqrt{1/3}} = 0.8909\]
+\item Complete asset price lattice
+\begin{center}
+\begin{tabular*}{0.7\textwidth}{cccc}
+      &       &       & 56.559 \\
+      &       & 50.391 &  \\
+      & 44.896 &       & 44.896 \\
+40.000 &       & 40.000 &  \\
+      & 35.638 &       & 35.638 \\
+      &       & 31.751 &  \\
+      &       &       & 28.289 \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+### Illustration
+\begin{itemize}
+\item Value option with $K = 40$ at expiration
+\begin{center}
+\begin{tabular*}{0.7\textwidth}{lc}
+Option Payoff & Asset Price \\
+\hline 
+$\max(56.559 - 40, 0) = 16.559$ & 56.559 \\
+$\max(44.896 - 40, 0) = 4.896$ & 44.896 \\
+$\max(35.638 - 40, 0) = 0$ & 35.638 \\
+$\max(28.289 - 40, 0) = 0$  & 28.289 \\
+\end{tabular*}%
+\end{center}
+\end{itemize}
+
+\newpage
+### Illustration
+\begin{itemize}
+\item Value option one step back in time by taking present value of expected future value
+\item Risk Neutral probability $p^* $
+\[ p^* = \frac{e^{0.06 (1/3)} - 0.8909}{1.1224-0.8909} = 0.5584\]
+\begin{center}
+\begin{scriptsize}
+\begin{tabular*}{ \textwidth}{ ccc}
+        &      & 16.559 \\
+$11.183 = e^{-0.06} [ (0.5584) 16.559  + (1-0.5584) 4.896$]         & $\swarrow$       &  \\
+           & $\nwarrow$      & 4.896 \\
+ $ 2.680 = e^{-0.06} [ (0.5584) 4.896  + (1-0.5584) 0 $]     &  $\swarrow$         &  \\
+        &   $\nwarrow$     & 0.000 \\
+      0.000     & $\swarrow$  &  \\
+            &  $\nwarrow$      &  0.000 \\
+\end{tabular*}%
+\end{scriptsize}
+\end{center}
+\end{itemize}
+
+### Illustration
+\begin{itemize}
+\item Continue iterative process. 
+\begin{center}
+\begin{tabular*}{0.7 \textwidth}{ cccc}
+      &       &       & 16.559\\
+      &       & 11.183 &  \\
+      & 7.282 &       & 4.896 \\
+4.621 &       & 2.680 &  \\
+      & 1.467 &       & 0.000 \\
+      &       & 0.000 &  \\
+      &       &       & 0.000 \\
+\end{tabular*}%
+\end{center}
+\item Call option price with exercise price $K=40$ at the maturity of 1 year is $4.621$
+\end{itemize}
+
+\newpage
+### Is the Binomial Model Realistic?
+\begin{itemize}
+\item The binomial model is a form of the random walk model, adapted to modeling stock prices. The random walk model in this section assumes among other things, that 
+\begin{itemize}
+\item Volatility is constant
+\item "Large" stock price movements do not occur
+\item Returns are independent over time
+\end{itemize}
+\item All of these assumptions appear to be violated in the data.
+\end{itemize}
+
+\newpage
+#### Summary
+
+\begin{itemize}
+\item In order to price an option, we need to know
+\begin{itemize}
+\item Asset price ($S$)
+\item Strike price ($K$)
+\item Standard deviation of returns on the asset ,i.e., asset volatility ($\sigma$)
+\item Dividend yield ($\delta$)
+\item Risk-free rate ($r$)
+\end{itemize}
+\item Using the risk-free rate ($r$) and volatility ($\sigma$) , we can approximate the future distribution of the asset by creating a binomial tree. 
+\item Once we have the binomial tree, is it possible to price the option. 
+\end{itemize}
+
+### Summary 
+\begin{itemize}
+\item Steps of binomial method
+\begin{itemize}
+\item Step 1 : Create asset price lattice.
+\item Step 2 : Decide on length of time increment $h$. 
+\item Step 3 : Value option at expiration 
+\item Step 4 : Step back one time increment ($h$) and take present value of expected future option value.
+\end{itemize}
+\end{itemize}
+
+
+
