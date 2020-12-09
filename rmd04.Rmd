@@ -1,0 +1,283 @@
+---
+title: "Chapter 4"
+author: "Kyounghun Bae"
+date: '2020 1 22 '
+output: html_document
+---
+
+# Swaps
+
+### Risk Management using forwards
+
+#### Introduction to Swaps
+* Swap is a contract calling for an exchange of payments, on one or more assets, determined by the difference in two prices.
+* Swap provides a means to hedge a stream of risky payments.
+* Single-payment is the same thing as a cash-settled forward contract.
+* Swap contracts are portfolios of forwards.
+* Key information to value a swap contract is forward curve of the underlying asset. 
+
+
+
+#### Forward Curve
+* The set of prices for different expiration dates for a given asset is called the forward curve (or the forward strip) for that date.
+* If on a given date the forward curve is upward sloping, then the market is contango. If the forward curve is downward sloping, the market is in backwardation. 
+* Forward curve is normally upward sloping since interest $r$ is greater than convenience yield $\delta$.
+* Forward curve is influenced by fundamentals such as interest rate, storage costs, and convenience yields, however, ultimately depends on where supply meets demand. 
+
+
+#### Contango
+* Futures price is above expected spot price and moves downward (relative to spot price) through time.
+  + Note that both futures prices and expected spot prices are constantly adjusting new information.
+* Consider crude oil futures. Frequently used by airlines to hedge cost of jet fuel in short- to intermediate-run. 
+\begin{itemize}
+  + Heating oil futures not nearly as active.
+  + Long hedging demand cause contango.
+  + Abnormal returns can only be earned by shorts to extent that futures price exceeds expected spot price.
+
+
+#### Normal Backwardation
+* Futures price is below expected spot price and moves upward (relative to spot price) through time.
+* Consider corn futures. Determined by net imbalance between short hedgers(farmers) and long hedgers(consumers).
+  + Usually downward sloping or inverted but sometimes upward sloping.
+  + Depends on crop year.
+
+
+###Commodity Swaps
+
+#### Commodity Swap
+* An industrial producer, IP Inc., needs to buy 100,000 barrels of oil 1 year from today and 2 years from today. 
+* The forward prices for deliver in 1 year and 2 years are \$110 and \$111 / barrel.
+* The 1- and 2-year risk-free rates are 6\% and 6.5\%. 
+* One way is to enter into long forward contracts for 100,000 barrels in each of the next 2 years.
+
+
+#### Commodity Swap}
+* IP can guarantee the cost of buying oil for the next 2 years by entering into long forward contracts for 100,000 barrels in each of the next 2 years. The PV of this cost per barrel is
+\[110 e^{-0.06} + 111 e^{-0.065 \times 2} = 201.063\]
+* Thus, IP could pay an oil supplier \$201.063, and the supplier would commit to delivering one barrel in each of the next two years.
+* Prepaid swap is a single payment today to obtain multiple deliveries in the future. 
+
+
+#### Commodity Swap
+* With a prepaid swap, the buyer might worry about the resulting credit risk.
+* Defer payment until oil is delivered, while still fixing the total price.
+* Any fixed payments that have a present value of \$201.063 are acceptable. Typically, a swap will call for equal payments in each year
+* The payment per year per barrel, $x$, will have to be \$110.482 to satisfy the following equation
+\[x e^{-0.06} + x e^{-0.065 \times 2}   = 201.063\]
+* We then say that 2-year swap price is \$110.482 .
+
+
+#### Illustration
+* Commodity Swap.xlsx
+* Sheet : Buy Strip \& Compute Fair Price.
+
+
+#### Financial Settlement of the Swap
+* The oil buyer pays \$110.482 and receives the spot price
+* The oil buyer, IP, pays the swap counterparty the difference between \$110.482 and the spot price, and the oil buyer then buys oil at spot price. 
+\item Whatever the market price of oil, the net cost to the buyer is the swap price \$110.482.
+\[  \underbrace{\text{Spot price - swap price}}_{\text{Swap payment}} - \underbrace{\text{spot price}}_{\text{Spot purchase of oil}} \]
+\item The results for the buyer are the same whether the swap is settled physically or financially. In both cases, the net cost to the oil buyer is \$ 110.482. 
+
+
+#### Swap Counterparty
+* The swap counterparty is a dealer, who is, in effect, a broker between buyer and seller.
+* The fixed price paid by the buyer, usually, exceeds the fixed price received by the seller. The price difference is a bid-ask spread, and is the dealer's fee.
+* The dealer bears the credit risk of both parties, but is not exposed to price risk.
+
+
+#### Swap Counterparty
+* The situation where the dealer matches the buyer and seller is called a \textit{back-to-back transaction} or "matched book" transaction. 
+
+
+#### Computing the Swap Rate
+* Notation
+  + Suppose there are $n$ swap settlements, occurring on dates $t_{i}, i = 1,\cdots n$.
+  + The forward prices on these dates are given by $f_{0,t_i}$.
+  + The price of a zero-coupon bond maturing on date $t_i$ is $P_{0,t_i}  $ paying $\$1$ on date $t_i$ with discount rate $r_{t_i}$.  
+* If the buyer at time zero were to enter into forward contracts to purchase one unit on each of the $n$ dates, the present value of payments would be the present value of the forward prices, which equals the price of the prepaid swap : 
+\[\sum_{i=1}^n f_{0,t_i} P_{0,t_i} = \sum_{i=1}^n f_{0,t_i} e^{-r_{t_i} t_i}\]
+
+
+
+#### Computing the Swap Rate
+* We determine the fixed swap price, $R$, by requiring that the present value of the swap payments equal the value of the prepaid swap
+\[ \sum_{i=1}^n R e^{-r_{t_i} t_i} =  \sum_{i=1}^n f_{0,t_i} e^{-r_{t_i} t_i}  \]
+* Equation can be rewritten as
+\[R = \frac{ \sum_{i=1}^n f_{0,t_i} e^{-r_{t_i} t_i}}{\sum_{i=1}^n  e^{-r_{t_i} t_i}} \]
+* $\sum_{i=1}^n f_{0,t_i} e^{-r_{t_i} t_i}$ is the present value of interest payments implied by the strip of forward rates
+* $\sum_{i=1}^n e^{-r_{t_i} t_i}$ is the present value of a \$ 1 annuity.
+
+
+#### Computing the Swap Rate
+* We can rewrite equation to make it easier to interpret
+\[ R =  \sum_{i=1}^n \left [ \frac{  e^{-r_{t_i} t_i}}{\sum_{i=1}^n  e^{-r_{t_i} t_i}} \right ] f_{0,t_i} \]
+* Thus, the fixed swap rate is as a weighted average of the implied forward rates, where zero-coupon bond prices (or discount factors) are used to determine the weights. 
+
+
+#### Swaps with Variable Quantity and Prices
+* A buyer with seasonally varying demand (e.g., someone buying gas for heating) might enter into a swap, in which \textit{quantities} vary over time. 
+* Consider a swap in which the buyer pays $R Q_{t_i}$, for $Q_{t_i}$ units of commodity. The present value of these fixed payments (fixed per unit of the commodity) must equal the prepaid swap price. 
+\[ \sum_{i=1}^n R Q_{t_i} e^{-r_{t_i} t_i} =  \sum_{i=1}^n f_{0,t_i} Q_{t_i} e^{-r_{t_i} t_i}  \]
+* Solving $R$ gives 
+\[R = \frac{ \sum_{i=1}^n f_{0,t_i} Q_{t_i} e^{-r_{t_i} t_i}}{\sum_{i=1}^n  Q_{t_i} e^{-r_{t_i} t_i}}  = \sum_{i=1}^n \left [ \frac{ Q_{t_i} e^{-r_{t_i} t_i}}{\sum_{i=1}^n  Q_{t_i} e^{-r_{t_i} t_i}} \right ] f_{0,t_i} \]
+
+
+#### Illustration
+* Manage chain of filling stations and want to lock in price of future deliveries of unleaded gasoline over next 6 months.
+  + your demands will be 10,000 gallons for months 1 to 2, 30,000 gallons for months 3 to 4, and 20,000 gallons for months 5 to 6. 
+  + no ability to store
+  + interest rate is 5\%. 
+
+
+#### Illustration
+* Alternative 1 : Buy strip of NYMEX futures.
+  + Commodity Swap.xlsx}
+  + Sheet : Buy Strip(Varying Quantity)
+* Alternative 2 : Enter or buy OTC swap contract. Promises delivery of monthly demands for 6 months at fixed price of \$ 0.55 per gallon.
+  + Commodity Swap.xlsx}
+  + Sheet : Buy OTC Swap(Varying Quantity)
+
+
+#### Illustration
+* OTC agreement's cost is \$64,955.41
+* Cost of futures strip is \$64,515.81
+* Difference if \$439.61 
+  + OTC dealer's fee (i.e. margin)
+
+
+#### Setting Price Quotes
+* How does OTC dealer set price quotes?
+  + Identifies "fair value" using actively-traded hedge instruments.
+  + Adds or subtracts margin, depending upon whether customer wants to buy or sell. 
+* Suppose oil refiner contracts OTC dealer and requests fixed price per gallon on swap contract. 
+  + Unleaded gasoline futures contracts are actively-traded on NYMEX.
+  + Find prices of futures contracts whose expiration match refiner's desired delivery dates
+  + Set PV(OTC) = PV(Strip) and Solve
+
+
+
+#### Illustration
+* Commodity Swap.xlsx
+* Sheet : Compute Fair Price(Varying Q)
+
+
+#### Illustration
+* The fair price is \$0.5463. 
+* Based on fair price, OTC dealer sets price quote. 
+* Refiner wants to sell gasoline so OTC dealer sets bid price by subtracting margin from fair value. 
+* Suppose dealer wants \$ 500 margin. What bid price will he quote?
+* Set PV(OTC) + \$500 = PV(Strip)
+* Commodity Swap.xlsx
+* Sheet : Compute Swap Price(Margin)
+
+
+#### Dealer's margin
+* What drives size of OTC dealer's margin?
+  + Cost of hedging
+  + Premium for counterparty default risk
+  + Competition
+  + Prospect of repeated business
+  + Profit
+* OTC dealer frequently do not provide "two-sided" quotes.
+  + Know which side of the market customer is on.
+  + Simply adjust fair value to build in margin. 
+
+
+### Interest Rate Swaps
+
+#### Interest Rate Swaps
+* Companies use interest rate swaps to modify their interest rate exposures
+  + Firm swaps fixed-rate debt for floating-rate debt in order to reduce interest costs (while assuming interest rate risk).
+  + Firm swaps floating-rate debt for fixed-rate debt in order to lock-in rates and reduce interest rate exposure.
+* The interest payments are based on the notional payment of the swap
+
+
+
+#### Swap terms
+* No cash changes hands at outset.
+* No exchange of principal.
+* Interest payments are:
+  + usually semi-annual.
+  + netted (only one payment is made on each payment date)
+* Floating rate is based on 6-month LIBOR.
+  + Rate is usually set at the beginning of reset period.
+  + "Late LIBOR" means rate is set at the end of reset period. 
+
+
+
+#### Simple Interest Rate Swap
+* XYZ Corp. has \$200M of floating-rate debt at LIBOR, i.e., every year it pays that year's current LIBOR
+* XYZ would prefer to have fixed-rate debt with 3 years to maturity
+  + Retiring the floating-rate debt and issuing fixed-rate debt $\Rightarrow$ transaction costs
+  + Entering into a strip of forward rate agreements (FRAs) to guarantee the borrowing rate for the remaining life of the debt. 
+  + Entering into a swap to obtain interest rate exposures equivalent to that of fixed rate debt, which we will suppose is 6.9548\%. 
+
+
+#### Simple Interest Rate Swap
+* On net, XYZ pays 6.9548\% 
+\[\text{Net} = \underbrace{-LIBOR}_{\text{Floating Pmt.}} + \underbrace{LIBOR - 6.9548\%}_{\text{Swap Pmt.}} = - 6.9548\% \]
+
+
+#### Valuing Swaps
+* To value interest rate swap, compute present value of each leg, and then take difference
+\[V_{Swap} = PV_{fixed} - PV_{floating}\]
+* Fixed-rate leg : Cash flows of fixed-rate leg are \textbf{known}
+  + Discount each cash flow at appropriate zero-coupon rate and sum
+* Floating-rate leg : Cash flows of floating rate leg are **not known.**
+  + Must project interest payments from forward rate implied by zero-coupon yield curve.
+  + Discount estimated cash flows to present and sum. 
+
+
+#### Illustration
+* Find quoted fixed-rate for five-year fixed-for-floating swap
+\item Suppose zero coupon yield curve is given by
+\[r_t = 0.04 + 0.01 \ln(1+t)\]
+* Suppose notional amount is \$100. 
+  + Interest Rate Swap.xlsx}
+  + Sheet : Floating Rate Leg \& Fixed Rate Leg.
+
+
+#### Illustration
+* Steps for valuing floating rate leg
+  + Find spot rates for each cash flow from yield curve
+  + Compute implied forward rates
+\[f_{0.5, 1.0} = \frac{0.04693(1) - 0.04405(0.5)}{1-0.5} = 0.04981 \]
+* Compute Expected cash flows
+\[CF_{0.5} = 100 \left[e^{0.04405 (0.5)} -1 \right] = 2.2272\]
+* Compute present value of expected cash flows. 
+
+
+#### Illustration
+* Steps for valuing fixed rate leg
+* Find spot rates for each cash flow from yield curve
+* Try arbitrary fixed rate and compute PV.
+* Using Solver, find swap rate such that PV of floating rate leg equals PV of fixed rate leg. 
+
+
+#### Illustration
+* From zero-coupon yield, you found fixed rate that equates PV of fixed-rate leg with floating-rate leg.
+* Value of swap is zero at initial time.
+* OTC swap dealer would set quotes around 5.8214\%
+  + E.g., bid at 5.80\% and ask at 5.84\%
+* Suppose two months have elapsed. Interest rates are now:
+\[r_t = 0.05 + 0.01 \ln(1+t)\]
+* Compute new swap value. 
+
+
+#### Illustration
+* For the floating rate leg, the first payment has been set at 2.2272
+* Suppose you are receiving fixed and paying floating.
+\[PV_{fixed} - PV_{floating} = 96.8884-100.4411 = -3.5527\]
+* The swap value of your counterparty is 3.5527.
+
+
+### Summary
+
+#### Summary
+* Many "commodity swaps" are "fixed-price, fixed-supply" contracts
+\begin{itemize}
+  + Contracts are portfolios of forwards.
+  + Fairness of prices can be deducted from exchange-traded products. * Swap is a contract calling for an exchange of payments, on one or more dates, determined by the difference in two prices. 
+* Swap provides a means to hedge a stream of risky payments. 
+* Single-payment swap is the same thing as a cash-settled forward contract. 

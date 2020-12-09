@@ -1,0 +1,443 @@
+---
+title: "Chapter 8"
+author: "Kyounghun Bae"
+date: '2020 2 20 '
+output: html_document
+---
+
+# Option Strategies
+
+###Option Strategies
+
+#### Option Strategies
+* Dynamic Strategies
+  + Position is managed from day-to-day as underlying asset price moves and/or as time passes
+* Passive Strategies
+  + Positions taken today and held until expiration
+
+ 
+ 
+#### Risk Measurement
+* Option value is sensitive to changes in underlying determinants(i.e., asset price, income rate, interest rate, volatility rate, and time to expiration)
+* Sensitivities are known by a variety of Greek letters
+* Greeks are keys to effective dynamic risk management of portfolios with options
+
+
+#### Option Greeks
+* What happens to the option price when one and only one input changes?
+  + Delta ($\Delta$) : change in option price when stock price increases by \$1
+  + Gamma ($\Gamma$) : change in delta when stock price increases by \$1
+  + Vega   : change in option price when volatility increases by 1
+  + Theta ($\theta$) : change in option price when time-to-maturity  decreases by 1 day
+  + Rho ($\rho$) : change in option price when interest rate increases by 1
+  + Psi ($\psi$) : change in option price when income rate increases by 1
+
+
+#### Option Greeks
+* Greeks may be computed analytically using BSM option valuation formula
+\begin{eqnarray*}
+c & = &  S e^{-\delta T} N(d_1) - K e^{-r T} N(d_2)\\
+p & =&  K e^{-r T} N(-d_2) - S e^{-\delta T} N(-d_1) 
+\end{eqnarray*}
+where 
+\[ d_1 = \frac{\ln\left(\frac{S e^{-\delta T}}{K e^{-r T}} \right) +   \sigma^2   T}{\sigma \sqrt{T}}  \]
+\[d_2 = d_1 - \sigma \sqrt{T} \]
+
+
+#### Delta ($\Delta$)
+* Call
+\[ \Delta_c = \frac{\partial c}{\partial S} = e^{-\delta T} N(d_1) > 0 \]
+\begin{itemize}
+  + Call is right to buy underlying asset at fixed price. Higher is asset price, more valuable is call. 
+\end{itemize}
+* Put
+\[ \Delta_p = \frac{\partial p}{\partial S} = -e^{-\delta T} N(-d_1) < 0 \]
+  + Put is right to sell underlying asset at fixed price. Higher is asset price, less valuable is put.
+
+ 
+#### Delta ($\Delta$)}
+* Change in call value = $\Delta_c \times$ change in asset price
+
+
+
+#### Gamma ($\Gamma$)
+* Call 
+\[ \Gamma_c = \frac{\partial^2 c}{\partial S^2} = \frac{e^{-\delta T} N'(d_1)}{S \sigma \sqrt{T}} > 0 \]
+* Put
+\[ \Gamma_p = \frac{\partial^2 p}{\partial S^2} = \frac{e^{-\delta T} N'(d_1)}{S \sigma \sqrt{T}} > 0 \]
+* $N'(d)$ is
+\[ N'(d) = \frac{1}{\sqrt{2 \pi} } e^{-\frac{1}{2} d^2} \] 
+  + In Excel, use "\textbf{=NORMDIST(d,0,1,0)}"
+
+
+
+#### Vega
+* Call 
+\[Vega_c = \frac{\partial c}{\partial \sigma} =  S e^{-\delta T} N'(d_1) \sqrt{T} \]
+* Put
+\[Vega_p = \frac{\partial p}{\partial \sigma} = S e^{-\delta T} N'(d_1) \sqrt{T} \] 
+}
+
+#### Vega
+* Change in call value = $Vega_c \times$ change in volatility rate
+
+
+#### Theta($\theta$)
+* Call
+\begin{eqnarray*}
+\theta_c & = &  \frac{\partial c}{\partial T} \\
+& = & K e^{-r T} N'(d_2) \frac{\sigma}{2\sqrt{T}} \\
+& &  -\delta S e^{-\delta T} N(d_1) + r K e^{-r T} N(d_2) 
+\end{eqnarray*}
+* Put
+\begin{eqnarray*}
+\theta_p &= &  \frac{\partial p}{\partial T} \\
+& = & K e^{-r T} N'(d_2) \frac{\sigma}{2\sqrt{T}} \\
+& & +\delta S e^{-\delta T} N(-d_1) - r K e^{-r T} N(-d_2) 
+\end{eqnarray*}
+
+
+
+
+#### Rho($\rho$)}
+* Call 
+\[\rho_c = \frac{\partial c}{\partial r} =  T K e^{-r T} N(d_2) > 0\]
+* Put
+\[\rho_p = \frac{\partial p}{\partial r} = -T K e^{-r T} N(-d_2) < 0 \] 
+
+
+
+
+#### Rho ($\rho$)
+* Change in call value = $\rho_c \times$ change in interest rate
+
+
+#### Psi($\psi$)
+* Call 
+\[\psi_c = \frac{\partial c}{\partial \delta} =  -T S e^{-\delta T} N(d_1) < 0\]
+* Put
+\[\psi_p = \frac{\partial p}{\partial \delta} = T S e^{-\delta T} N(-d_1) > 0 \] 
+
+
+
+#### Psi ($\psi$)
+* Change in call value = $\psi_c \times$ change in income rate
+
+
+### Market Maker Risk}
+
+#### What do Market Makers Do?
+* Provide immediacy by standing ready to sell to buyers (at ask price) and to buy from sellers (at bid price)
+* Generate inventory as needed by short-selling
+* Profit by charging the bid-ask spread
+
+
+#### Option Market Maker Risk
+* The position of a market maker is the result of whatever order flow arrives from customers
+* Market makers attempt to hedge in order to avoid the risk from their arbitrary positions due to customer order flows
+* Market makers can control risk by delta hedging
+* Delta-hedged positions should expect to earn risk-free return
+
+ 
+
+#### Hedging risk exposures
+* To measure sensitivity of option portfolio value to change in asset price, interest rate, income rate, volatility rate, or time to expiration, compute Greeks of overall portfolio
+  + Multiply each option's Greek by number of contracts
+  + Sum across options
+* To hedge any particular exposure, buy/sell other options such that new option positions, when combined with existing portfolio, have net exposure of zero
+
+
+
+#### Delta-Hedging
+* Suppose a customer wishes to buy one contract of 91-day call option with exercise price $K= 40$ on XYZ company.
+* The market maker fills this order by selling the call option.
+  + XYZ's stock pays no dividend ($\delta = 0$), has a current price of \$ 40 and has a volatility rate is 30\%.
+  + interest rate is 8\%
+  + Contract size is assumed to be 100 shares
+
+
+
+#### Delta-Hedging
+* Price and Greek information for the call 
+\begin{eqnarray*}
+c & = & 2.7804 \\
+\Delta_c & = & 0.5824 \\
+\Gamma_c & = & 0.0652 
+\end{eqnarray*}
+* Because the market-maker has written the option, the sign of the Greek measures for the position is opposite those of a purchased option. 
+
+
+
+#### Delta-Hedging
+* Change in call value = $\Delta_c \times$ change in asset price
+  + At a stock price of \$ 40.75, i.e., \$ 0.75 increase in  stock price, the call option value change is 
+\[ \text{Change in call value} = -0.5824 \times 0.75 \times 100 = -43.68 \]
+* Suppose the market maker buys  58.24 shares of XYZ stock at \$ 40. If XYZ stock price moves to \$40.75, the value change from stock is 
+\[ 58.24 \times (40.75 - 40.00 0) = 43.68\] 
+
+
+#### Delta-Hedging
+* Suppose a market maker sells one contract, and buys $\Delta$ shares 
+  + Stock prices are \$40.00, \$40.50, \$39.25 at day 0, 1, and 2. 
+  + Write 91 days call option with exercise price $K = 40$
+  + Interest rate is 8\%
+* Self-financing strategy : A trading strategy that has no cash inflows or outflows prior to its liquidation. It is zero-investment and risk-free. 
+* Suppose that a lender is willing at all times to lend us the value of securities in the portfolio. 
+
+
+#### Delta-Hedging
+* Price and Greek measures over two days
+
+ |$t$| $T-t$ | $S_t$ | $c_t$ | $\Delta_t$ | $\Gamma_t$ |
+ |:---:|:---:|:---:|:---:|:---:|:---:|
+|0 | 91 | 40.00 | 2.7804 | 0.5824 | 0.0652|
+|1 | 90 | 40.50 | 3.0621 | 0.6142 | 0.0634 |
+|2 | 89 | 39.25 | 2.3282 | 0.5311 | 0.0684|
+
+
+
+#### Delta-Hedging
+* **Day 0** : Sell call written on 100 shares for \$278.04, and buy 58.24 shares. 
+  + Net investment : $58.24 \times 40.00 - 278.04 = 2051.06$
+  + Overnight interest : \$ 0.45 $= 2051.06 (e^{0.08/365} -1)$
+
+
+#### Delta-Hedging
+* **Day 1: Market-to-Market** 
+
+|Gain/Loss on Stock || $58.24 \times (40.50-40.00)   = 29.12 $|
+|:---:|:---:|:---:|
+|Gain/Loss on Call || $-306.21 -(-278.04) = -28.17$ |
+|Paying Interest || $0.45 = 2051.06 (e^{0.08/365} -1)$|
+|Overnight Profit || 29.12-28.17-0.45 = 0.50 |
+
+
+* **Day 1 : Cash Flow** : Buy 3.18 shares
+
+|Additional Borrowing || $2181.30-2051.06 = 129.74$ |
+|:---:|:---:|:---:|
+|Buying Stocks | | $3.18 \times 40.50 = 128.79$ |
+|Paying Interest || $0.45 = 2051.06 (e^{0.08/365} -1)$|
+|Net Cash Flow || 129.74 - 128.79 - 0.45 = 0.50 |
+
+
+
+#### Delta-Hedging
+* **Day 2: Market-to-Market**
+
+|Gain/Loss on Stock || $61.42 \times (39.25- 40.50)   = -76.78 $|
+|:---:|:---:|:---:|
+|Gain/Loss on Call || $-232.82 -(-306.21) = 73.39$ |
+|Paying Interest || $0.48 = 2181.30 (e^{0.08/365} -1)$|
+|Overnight Profit || -76.78 + 73.39 -0.48 = -3.87 
+
+
+* **Day 2 : Cash Flow** : Sell 8.31 shares
+
+|Additional Borrowing || $1851.75-2181.30 = -329.55$ |
+|:---:|:---:|:---:|
+|Selling Stocks || $8.31 \times 39.25 = 326.16$ |
+|Paying Interest || $0.48 = 2181.30 (e^{0.08/365} -1)$|
+|Net Cash Flow || -329.55 + 326.16 - 0.48 = -3.87 |
+
+#### Delta-Hedging
+* **Day t: Market-to-Market**
+
+|Gain Stock | | $\Delta_{t-1} (S_t - S_{t-1})$|
+|:---:|:---:|:---:|
+|Gain on Written Call || $-c_t + c_{t-1}$ |
+|Paying Interest || $R_t = (\Delta_{t-1} S_{t-1} - c_{t-1}) e^{r/365}$|
+|Overnight Profit || $\Delta_{t-1}(S_t-S_{t-1}) - (c_t - c_{t-1}) - R_t$|
+
+* **Day t : Cash Flow** Buy $(\Delta_t -\Delta_{t-1})$ shares
+
+|Additional Borrowing || $(\Delta_t S_t - c_t)-(\Delta_{t-1}S_{t-1} - c_{t-1})$ |
+|:---:|:---:|:---:|
+|Buying Stocks || $-(\Delta_t - \Delta_{t-1})S_t$ |
+|Paying Interest ||  $R_t = (\Delta_{t-1} S_{t-1} - c_{t-1}) e^{r/365}$ |
+|Net Cash Flow || $\Delta_{t-1}(S_t-S_{t-1}) - (c_t - c_{t-1}) - R_t$|
+
+
+#### Illustration
+* Delta Hedging.xlsm
+* Sheet : Dynamic Delta Hedging.
+
+
+#### Delta-Hedging
+* Recall that call option price is $2.7804$ with with $K= 40$ when $S = 40$
+  + At a stock price of \$ 40.75, i.e., \$ 0.75 increase in  stock price, the call option value change is 
+\[ \text{Change in call value} = 0.5824 \times 0.75 = 0.4368 \]
+  + But, the actual call option price when $S = 40.75$ is  $3.2352$, and the actual change in call value is
+\[0.4548 = 3.2352 -2.7804 \]
+
+
+#### Delta-Hedging
+* The actual value change is different from the delta approximation.
+  + This discrepancy occurs because delta varies with the stock price
+  + As the stock price increases and the option moves into the money, delta also increases.
+* Using the delta may understate or overstate the actual change in the value of the option. 
+
+
+
+#### Delta-Gamma Hedging
+* Gamma measures the change in delta when the stock price changes. 
+  + The gamma of 0.0652 means that delta will change by approximately 0.0652 if the stock price moves \$ 1. 
+* Using $\Gamma$ in addition to $\Delta$ improves the approximation of the option value change 
+
+
+
+#### Delta-Gamma Hedging
+* $\Gamma$ is change in delta per dollar of stock price change
+\[ \Gamma_t = \frac{\partial \Delta}{\partial S} \approx  \frac{\Delta_{t+h} - \Delta_t}{S_{t+h} - S_t}\]
+* That is,
+\[\Delta_{t+h} \approx \Delta_t + \Gamma_t (S_{t+h} - S_t) \]
+* We can approximate the change in call value by averaging deltas 
+\begin{eqnarray*}
+c_{t+h} & = & c_t + \Delta_{Average} (S_{t+h} - S_t) \\
+& = & c_t + (S_{t+h} - S_t)\Delta_t + \frac{1}{2} (S_{t+h} - S_t)^2 \Gamma_t
+\end{eqnarray*}
+
+
+
+#### Delta-Gamma Hedging
+* Suppose market maker wants to hedge her delta and gamma exposures.
+* We cannot do this using just the stock because the gamma of stock is zero. 
+* To hedge two different risk exposures, two assets (Stock + Option or Two options) are needed. 
+
+
+
+#### Delta-Gamma Hedging
+* Calculate the portfolio risk exposures. The Greek measure of a portfolio is weighted average of Greeks of individual portfolio components
+\[ Greek_{Port} = \sum w_i Greek_i \]
+* Compute number of shares of contracts analytically,
+\begin{eqnarray*}
+\Delta_{Port} & = & n_s \Delta_S + n_c \Delta_c \\
+\Gamma_{Port} & = & n_s \Gamma_S  + n_c \Gamma_c  
+\end{eqnarray*}
+* Solve numerically (e.g., SOLVER in Excel)
+
+
+
+#### Illustration
+* Option Market Makers(Stock Option).xlsm}
+* Sheet : Delta and Gamma Hedge.
+
+
+
+
+#### Delta-Gamma Hedging
+* Market maker has written 3-month call option with exercise price $K=40$
+  + Current asset price $S = 40$
+  + No dividend
+  + Interest rate is 8\%
+  + Volatility is 30\% 
+* Market maker will use stock and 4-month call option with $K = 45$ to hedge both delta and gamma risk exposures. 
+
+
+
+#### Delta-Gamma Hedging}
+* Prices and Greeks information
+
+||Call(40, 0.25) | Call(45, 0.33) | S |
+|:---:|:---:|:---:|:---:|
+|Price | 2.7847 | 1.3584 | 40 |
+|Delta | 0.5825 | 0.3285 | 1 |
+|Gamma | 0.0651 | 0.0524 | 0  |
+
+
+* Solve 
+\begin{eqnarray*}
+* 58.25 & = & n_s (1) + n_c (32.85) \\
+* 6.51 & = & n_s (0) + n_c (5.24) \\
+* n_c & = & 6.51/5.24 = 1.2408 \\
+* n_s & = & 58.25 - 1.2408(32.85) = 17.49  
+\end{eqnarray*}
+
+
+
+
+#### Index option market makers
+* Unlike stock option, index option's underlying asset is eligible for trading.
+* We can use index futures or other options to hedge risk exposures.
+  + The futures delta is 
+\[ \Delta_F = \frac{\partial F}{\partial S}  = e^{(r-\delta)T} \]
+
+
+
+#### Problem Information
+* Suppose S\&P 500 option market maker want to hedge risk exposures, for. e.g., delta , delta and gamma, or delta and vega
+* Suppose a market maker in S\&P 500 index options ends the day with 
+
+|Exercise Price | Call Put | Days to Expiration | No. of Contract|
+|:---:|:---:|:---:|:---:|
+|950  | c | 30    | -200.00  |
+|1000  | c     | 60    | -200.00 |
+|900   | p     | 90    | -200.00 |
+|950   | p     | 30    | -130.00 |
+
+
+#### Problem Information
+* Assume he wants to hedge delta risk/delta-vega risk overnight. 
+* Consider two hedging alternatives (S\&P 500 futures or/and  1000-call option)
+  + S\&P 500 Index
+      + Current level : 1000
+      + Dividend yield : 2\%
+      + Volatility : 20\% 
+  + S\&P 500 futures 
+      + 90 days to expiration
+      + current price is 1002.47
+  +  S\&P 1000-call
+      + 90 days to expiration
+
+
+#### Delta Hedging with futures
+* Use futures
+\begin{eqnarray*}
+221.28 & = & 1.0025 n_F \\
+n_F & = & \frac{221.28}{1.0025} = 220.73
+\end{eqnarray*}
+
+
+
+#### Delta Hedging with call
+* Use futures
+\begin{eqnarray*}
+221.28 & = & 0.5271 n_c \\
+n_c & = & \frac{221.28}{0.5271} = 419.82
+\end{eqnarray*}
+
+#### Delta-Vega Hedging
+* Market maker worries about the change in volatility as well as the change in index level
+* Assume market maker wants to hedge delta and vega risks overnight. 
+  + Use S\&P 500 futures and 1000-call options
+* Solve 
+\begin{eqnarray*}
+  + 221.28 & = & n_F (1.0025) + n_c (0.5271) \\
+  + 77157.71 & = & n_F (0) + n_c (196.5796) \\
+  + n_c & = & 77157.71/196.5796 = 392.50 \\
+  + n_F & = & (221.28 - 392.50(0.5271))/1.0025 = 14.36  
+\end{eqnarray*}
+
+
+
+### Summary
+
+
+#### Summary
+* Greeks are sensitivities of option value to changes in its determinants
+* Greeks are
+  + $\Delta$ and $\Gamma$ : Asset Price
+  + $Vega$ : Volatility
+  + $\theta$ : Time-to-maturity
+  + $\rho$ : interest rate
+  + $\psi$ : income rate
+
+
+
+#### Summary
+* Steps in dynamically hedging risk
+  + identify portfolio's risk exposures 
+  + identify available hedge instruments
+  + choose among available hedge instruments
+    + Costs are minimized (trading costs, interest costs, etc.)
+    + Desired risk exposures are eliminated
